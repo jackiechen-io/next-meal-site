@@ -120,6 +120,8 @@
                             <input type="checkbox" id="checkStore" class="w-4 h-4 md:w-5 md:h-5 accent-[#FFB5A7]"> 便利商店
                         </label>
                     </div>
+                    <label class="flex justify-around items-center bg-white p-3 rounded-xl border border-stone-100 shadow-sm">
+                    </label>
                     <button onclick="confirmAndLoadWheel()" class="w-full mt-3 py-3 bg-[#D4A373] text-white font-bold rounded-xl shadow-md hover:bg-[#C39364] transition-all text-sm md:text-base font-serif-tc tracking-widest">
                         🥰 確認並載入轉盤
                     </button>
@@ -156,7 +158,7 @@
 
     <!-- 頁尾 -->
     <footer class="py-3 text-center text-[10px] md:text-xs text-stone-400 border-t border-stone-100 bg-white font-medium tracking-wide">
-        © 2026 下一餐吃什麼～日系美食顧問・硬核預算過濾版
+        © 2026 下一餐吃什麼～日系美食顧問・精準餐期優化版
     </footer>
 
     <script>
@@ -205,6 +207,7 @@
             dinner: []
         };
         
+        // 晚餐沿用午餐基礎，並加入特色餐點
         foodDatabase.dinner = [...foodDatabase.lunch, 
             { name: "鹹酥雞", price: 2, hunger: 2, meat: 3 },
             { name: "鹽水雞", price: 2, hunger: 1, meat: 2 },
@@ -219,7 +222,7 @@
                 options: [
                     { label: "早餐 ☀️", value: "breakfast" },
                     { label: "午餐 🍛", value: "lunch" },
-                    { label: "晚餐 🌙", value: "dinner" }
+                    { label: "晚餐 🌙", value: "dinner" } // 已移除宵夜詞彙
                 ]
             },
             {
@@ -342,16 +345,15 @@
             const targetMeal = userAnswers.meal;
             const pool = foodDatabase[targetMeal] || [];
             
-            // 【核心優化一】：預算硬性過濾 (Strict Filtering) - 拒絕妥協
+            // 預算硬性過濾 (Strict Filtering)
             let matchedItems = pool.filter(food => food.price === userAnswers.price);
             
-            // 安全保底：萬一該時段的該預算「完全沒有任何食物」（例如早餐選奢華等級只剩1樣），則抓相鄰預算，確保轉盤不壞掉
             if (matchedItems.length < 3) {
                 const backups = pool.filter(food => food.price === (userAnswers.price - 1) || food.price === (userAnswers.price + 1));
                 matchedItems = [...matchedItems, ...backups];
             }
 
-            // 【核心優化二】：在絕對符合預算的群組內，再根據飢餓度與肉量精確計分
+            // 在絕對符合預算的群組內，再根據飢餓度與肉量精確計分
             let scoredPool = matchedItems.map(food => {
                 let score = 0;
                 if (food.hunger === userAnswers.hunger) score += 3;
@@ -363,13 +365,10 @@
                 return { ...food, score: score };
             });
 
-            // 依權重分數由高到低排序
             scoredPool.sort((a, b) => b.score - a.score);
 
-            // 擷取前 6 名最精準的頂級候選
             let finalSelection = scoredPool.slice(0, 6).map(item => item.name);
 
-            // 只有使用者手動勾選的保底備案，才允許跨越預算加入
             const hasFridge = document.getElementById("checkFridge").checked;
             const hasStore = document.getElementById("checkStore").checked;
             
