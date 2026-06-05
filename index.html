@@ -4,49 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>下一餐吃什麼~ 靈魂美食顧問</title>
+    <!-- 引入 Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@600;900&display=swap" rel="stylesheet">
+    <!-- Google Fonts: 思源黑體 與 思源宋體 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght=400;500;700;900&family=Noto+Serif+TC:wght=600;900&display=swap" rel="stylesheet">
     <style>
         body {
-            /* 全域基礎字型：思源黑體搭配高質感系統黑體 */
             font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang TC", "Microsoft JhengHei", sans-serif;
-            background-color: #FDFBF7; /* 改為極淡的暖米杏色背景，比冷白更有繪本溫度 */
+            background-color: #FDFBF7;
             font-size: 1.05rem;
-            letter-spacing: 0.04em; /* 全域字距微調寬，讓繁體字更具呼吸感 */
+            letter-spacing: 0.04em;
         }
-        /* 自訂專屬文青宋體類別 */
         .font-serif-tc {
             font-family: 'Noto Serif TC', "PingFang TC", "Microsoft JhengHei", serif;
         }
-        /* 自訂馬卡龍滾動條 */
         ::-webkit-scrollbar {
-            width: 6px;
+            width: 5px;
         }
         ::-webkit-scrollbar-track {
             background: #FDFBF7;
-            border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb {
             background: #FFE5D9;
             border-radius: 10px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #FCD5CE;
-        }
     </style>
 </head>
 <body class="text-stone-800 min-h-screen flex flex-col antialiased">
 
-    <header class="bg-[#FFF3CD] border-b border-[#FCE8A6] py-9 px-4 text-center sticky top-0 z-50 shadow-sm">
-        <div class="max-w-4xl mx-auto flex flex-col items-center justify-center gap-4">
-            <div class="w-56 h-28 flex items-center justify-center">
-                <svg viewBox="0 0 400 200" class="w-full h-full drop-shadow-md">
+    <!-- 頂部看板優化：手機版維持置頂固定，電腦版(md:)改成 relative 隨網頁滾動消失，釋放 100% 垂直視野 -->
+    <header class="bg-[#FFF3CD] border-b border-[#FCE8A6] py-3 md:py-6 px-4 sticky md:relative top-0 z-50 shadow-sm">
+        <div class="max-w-4xl mx-auto flex flex-row md:flex-col items-center justify-start md:justify-center gap-3 md:gap-4">
+            <!-- 吉祥物 SVG -->
+            <div class="w-16 h-10 md:w-56 md:h-28 flex items-center justify-center shrink-0">
+                <svg viewBox="0 0 400 200" class="w-full h-full drop-shadow-sm">
                     <path d="M 195 45 C 190 35, 175 35, 175 50 C 175 65, 195 80, 195 80 C 195 80, 215 65, 215 50 C 215 35, 200 35, 195 45 Z" fill="#FFB5A7" opacity="0.8"/>
                     <path d="M 60 30 L 65 35 L 60 40 L 55 35 Z" fill="#FFF" />
                     <path d="M 340 50 L 345 55 L 340 60 L 335 55 Z" fill="#FFF" />
                     <circle cx="210" cy="120" r="4" fill="#FFCAD4" opacity="0.6"/>
                     <circle cx="160" cy="60" r="5" fill="#FFCAD4" opacity="0.6"/>
                     
+                    <!-- 珍珍 (珍珠奶茶) -->
                     <g id="zhen-zhen">
                         <path d="M 110 70 L 120 150 C 121 158, 169 158, 170 150 L 180 70 Z" fill="#E6CCB2" stroke="#7F5539" stroke-width="4" stroke-linejoin="round"/>
                         <line x1="150" y1="70" x2="155" y2="35" stroke="#B7B7A4" stroke-width="10" stroke-linecap="round"/>
@@ -68,6 +66,7 @@
                         <path d="M 160 155 Q 160 168, 155 168" fill="none" stroke="#7F5539" stroke-width="4" stroke-linecap="round"/>
                     </g>
 
+                    <!-- 雞排君 (炸雞排) -->
                     <g id="ji-pai-jun">
                         <path d="M 215 125 C 190 100, 210 65, 240 60 C 270 55, 300 70, 310 95 C 320 120, 290 150, 260 152 C 235 154, 225 135, 215 125 Z" fill="#FFB703" stroke="#FB8500" stroke-width="4" stroke-linejoin="round"/>
                         <circle cx="235" cy="85" r="2" fill="#FB8500"/>
@@ -85,70 +84,79 @@
                     </g>
                 </svg>
             </div>
-            <div>
-                <h1 class="text-3xl md:text-4xl font-black font-serif-tc text-amber-950 tracking-widest">下一餐吃什麼～</h1>
-                <p class="text-sm md:text-base text-stone-500 font-medium mt-2 tracking-wide">珍珍與雞排君，用溫度撫慰你的選擇障礙 ✨</p>
+            <div class="text-left md:text-center">
+                <h1 class="text-xl md:text-4xl font-black font-serif-tc text-amber-950 tracking-widest">下一餐吃什麼～</h1>
+                <p class="hidden md:block text-sm md:text-base text-stone-500 font-medium mt-1 tracking-wide">珍珍與雞排君，用溫度撫慰你的選擇障礙 ✨</p>
             </div>
         </div>
     </header>
 
-    <main class="max-w-6xl w-full mx-auto flex-1 grid grid-cols-1 md:grid-cols-12 gap-6 p-4 md:p-6 overflow-hidden">
+    <!-- 主要內容區區塊 -->
+    <main class="max-w-6xl w-full mx-auto flex-1 grid grid-cols-1 md:grid-cols-12 gap-4 p-3 md:p-6">
         
-        <section class="md:col-span-5 bg-white rounded-2xl border border-stone-100 shadow-sm flex flex-col h-[580px] md:h-[680px]">
-            <div id="chatHistory" class="flex-1 p-5 overflow-y-auto space-y-5 flex flex-col">
-                <div class="flex items-start gap-3 animate-fade-in">
-                    <div class="w-9 h-9 rounded-full bg-[#FFE5D9] flex items-center justify-center text-sm shadow-inner shrink-0">🧋</div>
-                    <div class="bg-stone-50 border border-stone-100 rounded-2xl rounded-tl-none p-4 max-w-[85%] text-base font-medium leading-relaxed tracking-wide text-stone-800">
+        <!-- 左側：心靈聊天視窗 -->
+        <section class="md:col-span-5 bg-white rounded-2xl border border-stone-100 shadow-sm flex flex-col h-[400px] md:h-[680px]">
+            <div id="chatHistory" class="flex-1 p-4 overflow-y-auto space-y-4 flex flex-col">
+                <div class="flex items-start gap-2.5 animate-fade-in">
+                    <div class="w-8 h-8 rounded-full bg-[#FFE5D9] flex items-center justify-center text-xs shadow-inner shrink-0">🧋</div>
+                    <div class="bg-stone-50 border border-stone-100 rounded-2xl rounded-tl-none p-3 max-w-[85%] text-sm md:text-base font-medium leading-relaxed tracking-wide text-stone-800">
                         嗨！終於等到你了～肚子空空的滋味很難受吧？別擔心，我和雞排君會幫你找到最完美的下一餐！
                     </div>
                 </div>
             </div>
 
-            <div id="interactionArea" class="p-5 border-t border-stone-50 bg-[#FFFDF9] rounded-b-2xl">
-                <div id="optionsContainer" class="grid grid-cols-1 gap-2.5"></div>
+            <!-- 下方互動操作按鈕與選項區 -->
+            <div id="interactionArea" class="p-4 border-t border-stone-50 bg-[#FFFDF9] rounded-b-2xl">
+                <div id="optionsContainer" class="grid grid-cols-1 gap-2"></div>
                 
-                <div id="backupContainer" class="hidden border-t border-stone-100 pt-4 mt-3">
-                    <p class="text-xs font-bold text-stone-400 mb-3 text-center tracking-wider">✨ 如果有需要，可以額外勾選保底備案：</p>
-                    <div class="flex justify-around items-center bg-white p-4 rounded-xl border border-stone-100 shadow-sm">
-                        <label class="flex items-center gap-2.5 text-base font-bold text-stone-600 cursor-pointer select-none tracking-wide">
-                            <input type="checkbox" id="checkFridge" class="w-5 h-5 accent-[#FFB5A7]"> 清冰箱料理
+                <!-- 備案自選核取機制 -->
+                <div id="backupContainer" class="hidden border-t border-stone-100 pt-3 mt-2">
+                    <p class="text-xs font-bold text-stone-400 mb-2.5 text-center tracking-wider">✨ 如果有需要，可以額外勾選保底備案：</p>
+                    <div class="flex justify-around items-center bg-white p-3 rounded-xl border border-stone-100 shadow-sm">
+                        <label class="flex items-center gap-2 text-sm md:text-base font-bold text-stone-600 cursor-pointer select-none tracking-wide">
+                            <input type="checkbox" id="checkFridge" class="w-4 h-4 md:w-5 md:h-5 accent-[#FFB5A7]"> 清冰箱料理
                         </label>
-                        <label class="flex items-center gap-2.5 text-base font-bold text-stone-600 cursor-pointer select-none tracking-wide">
-                            <input type="checkbox" id="checkStore" class="w-5 h-5 accent-[#FFB5A7]"> 便利商店
+                        <label class="flex items-center gap-2 text-sm md:text-base font-bold text-stone-600 cursor-pointer select-none tracking-wide">
+                            <input type="checkbox" id="checkStore" class="w-4 h-4 md:w-5 md:h-5 accent-[#FFB5A7]"> 便利商店
                         </label>
                     </div>
-                    <button onclick="confirmAndLoadWheel()" class="w-full mt-4 py-3.5 bg-[#D4A373] text-white font-bold rounded-xl shadow-md hover:bg-[#C39364] transition-all text-base font-serif-tc tracking-widest">
+                    <button onclick="confirmAndLoadWheel()" class="w-full mt-3 py-3 bg-[#D4A373] text-white font-bold rounded-xl shadow-md hover:bg-[#C39364] transition-all text-sm md:text-base font-serif-tc tracking-widest">
                         🥰 確認並載入轉盤
                     </button>
                 </div>
             </div>
         </section>
 
-        <section class="md:col-span-7 flex flex-col items-center justify-center gap-5 bg-white rounded-2xl border border-stone-100 shadow-sm p-6">
+        <!-- 右側：物理命運轉盤與候選清單 -->
+        <section id="wheelSection" class="md:col-span-7 flex flex-col items-center justify-center gap-4 bg-white rounded-2xl border border-stone-100 shadow-sm p-4 md:p-6">
             
-            <div class="relative w-full max-w-[340px] aspect-square flex items-center justify-center">
-                <div class="absolute -top-2 z-20 w-0 h-0 border-l-[14px] border-l-transparent border-r-[14px] border-r-transparent border-t-[26px] border-t-[#FB8500] drop-shadow-sm"></div>
+            <!-- 轉盤本體容器 -->
+            <div class="relative w-full max-w-[260px] md:max-w-[340px] aspect-square flex items-center justify-center">
+                <div class="absolute -top-1.5 z-20 w-0 h-0 border-l-[10px] md:border-l-[14px] border-l-transparent border-r-[10px] md:border-r-[14px] border-r-transparent border-t-[20px] md:border-t-[26px] border-t-[#FB8500] drop-shadow-sm"></div>
                 <canvas id="wheelCanvas" width="340" height="340" class="w-full h-full rounded-full border-4 border-[#FFF3CD] shadow-md transition-transform duration-75"></canvas>
-                <div class="absolute w-9 h-9 rounded-full bg-white border-4 border-[#D4A373] shadow-inner z-10"></div>
+                <div class="absolute w-7 h-7 md:w-9 md:h-9 rounded-full bg-white border-4 border-[#D4A373] shadow-inner z-10"></div>
             </div>
 
-            <button id="spinBtn" disabled onclick="spinWheel()" class="px-10 py-3.5 bg-stone-200 text-stone-400 font-black font-serif-tc rounded-full shadow-md cursor-not-allowed transition-all text-lg tracking-widest">
+            <!-- 控制旋轉按鈕 -->
+            <button id="spinBtn" disabled onclick="spinWheel()" class="px-8 py-3 bg-stone-200 text-stone-400 font-black font-serif-tc rounded-full shadow-md cursor-not-allowed transition-all text-sm md:text-lg tracking-widest">
                 請先完成心靈對話 🔮
             </button>
             
-            <div id="loadedBadge" class="hidden text-xs px-4 py-1.5 bg-[#E2F0CB] text-[#5A7234] rounded-full font-bold tracking-wide"></div>
+            <div id="loadedBadge" class="hidden text-xs px-3 py-1 bg-[#E2F0CB] text-[#5A7234] rounded-full font-bold tracking-wide"></div>
 
-            <div id="candidateCard" class="hidden w-full max-w-[420px] bg-[#FFFDF9] border border-[#FCE8A6] rounded-xl p-4 shadow-sm animate-fade-in mt-2 text-center">
-                <p class="text-xs font-black font-serif-tc text-[#D4A373] mb-3 tracking-widest">✨ 珍珍與雞排君為你精選的「口袋名單」 ✨</p>
-                <div id="candidateList" class="flex flex-wrap justify-center gap-2 max-h-[100px] overflow-y-auto p-1"></div>
-                <p class="text-[11px] text-stone-400 mt-2.5 tracking-wide">（偷偷告訴你：這些都是非常符合你當下靈魂需求的美味，轉到誰都超讚喔！）</p>
+            <!-- 今日精選候選名單看板 -->
+            <div id="candidateCard" class="hidden w-full max-w-[420px] bg-[#FFFDF9] border border-[#FCE8A6] rounded-xl p-3 shadow-sm animate-fade-in mt-1 text-center">
+                <p class="text-xs font-black font-serif-tc text-[#D4A373] mb-2 tracking-widest">✨ 珍珍與雞排君為你精選的「口袋名單」 ✨</p>
+                <div id="candidateList" class="flex flex-wrap justify-center gap-1.5 max-h-[90px] overflow-y-auto p-0.5"></div>
+                <p class="text-[10px] md:text-[11px] text-stone-400 mt-2 tracking-wide">（這些都是高度符合你當下需求的美味，轉到誰都超讚喔！）</p>
             </div>
         </section>
 
     </main>
 
-    <footer class="py-4 text-center text-xs text-stone-400 border-t border-stone-100 bg-white font-medium tracking-wide">
-        © 2026 下一餐吃什麼～日系心靈美食顧問・文青視覺優化版
+    <!-- 頁尾 -->
+    <footer class="py-3 text-center text-[10px] md:text-xs text-stone-400 border-t border-stone-100 bg-white font-medium tracking-wide">
+        © 2026 下一餐吃什麼～日系美食顧問・全端雙端流暢優化版
     </footer>
 
     <script>
@@ -252,7 +260,7 @@
                 ]
             },
             {
-                text: "【出門意願】最後一題～今天願意走多遠去尋找美食？(氛圍儀式題)",
+                text: "【出門意願】最後一題～今天願意走多遠去尋找美食？",
                 key: "distance",
                 options: [
                     { label: "只想在巷口 🚶", value: "close" },
@@ -287,8 +295,7 @@
 
                 q.options.forEach(opt => {
                     const btn = document.createElement("button");
-                    /* 優化：寬字距、暖石墨色，懸停時邊框柔和變色 */
-                    btn.className = "w-full text-left py-3.5 px-5 bg-white border-2 border-stone-100 hover:border-[#FFB5A7] rounded-xl hover:bg-[#FFFDF9] transition-all text-base md:text-lg font-bold shadow-sm animate-fade-in text-stone-800 tracking-wide";
+                    btn.className = "w-full text-left py-2.5 px-4 bg-white border-2 border-stone-100 hover:border-[#FFB5A7] rounded-xl hover:bg-[#FFFDF9] transition-all text-sm md:text-lg font-bold shadow-sm animate-fade-in text-stone-800 tracking-wide";
                     btn.innerText = opt.label;
                     btn.onclick = () => selectOption(q.key, opt);
                     container.appendChild(btn);
@@ -296,6 +303,7 @@
             } else {
                 addChatBubble("bot", "太棒了！心靈對話已完成，珍珍和雞排君已經感應到你的靈魂密碼囉！最後看看是否要加入保底備案呢？");
                 document.getElementById("backupContainer").classList.remove("hidden");
+                scrollChatToBottom();
             }
         }
 
@@ -306,22 +314,27 @@
             currentQuestionStep++;
             setTimeout(() => {
                 renderQuestion();
-            }, 400);
+            }, 300);
         }
 
         function addChatBubble(sender, text) {
             const chatHistory = document.getElementById("chatHistory");
             const wrapper = document.createElement("div");
-            wrapper.className = `flex items-start gap-3 max-w-[88%] text-base md:text-lg font-medium leading-relaxed tracking-wide ${sender === 'user' ? 'self-end flex-row-reverse' : 'self-start'}`;
+            wrapper.className = `flex items-start gap-2.5 max-w-[90%] text-sm md:text-lg font-medium leading-relaxed tracking-wide ${sender === 'user' ? 'self-end flex-row-reverse' : 'self-start'}`;
             
             const avatar = sender === 'bot' ? '🧋' : '😋';
             const bgClass = sender === 'bot' ? 'bg-stone-50 border border-stone-100 rounded-tl-none text-stone-800' : 'bg-[#FFE5D9] text-stone-900 rounded-tr-none font-bold';
 
             wrapper.innerHTML = `
-                <div class="w-9 h-9 rounded-full bg-white border border-stone-100 flex items-center justify-center text-xs shadow-sm shrink-0">${avatar}</div>
-                <div class="${bgClass} rounded-2xl p-3.5 shadow-sm">${text}</div>
+                <div class="w-8 h-8 rounded-full bg-white border border-stone-100 flex items-center justify-center text-xs shadow-sm shrink-0">${avatar}</div>
+                <div class="${bgClass} rounded-2xl p-3 shadow-sm">${text}</div>
             `;
             chatHistory.appendChild(wrapper);
+            scrollChatToBottom();
+        }
+
+        function scrollChatToBottom() {
+            const chatHistory = document.getElementById("chatHistory");
             chatHistory.scrollTop = chatHistory.scrollHeight;
         }
 
@@ -364,15 +377,20 @@
 
             const spinBtn = document.getElementById("spinBtn");
             spinBtn.disabled = false;
-            spinBtn.className = "px-10 py-4 bg-[#FFB5A7] text-white font-black font-serif-tc rounded-full shadow-md hover:bg-[#FCD5CE] cursor-pointer transition-all text-lg tracking-widest animate-pulse";
+            spinBtn.className = "px-10 py-3.5 bg-[#FFB5A7] text-white font-black font-serif-tc rounded-full shadow-md hover:bg-[#FCD5CE] cursor-pointer transition-all text-sm md:text-lg tracking-widest animate-pulse";
             spinBtn.innerText = "🌟 啟動命運轉盤 🌟";
 
             document.getElementById("backupContainer").classList.add("hidden");
-            document.getElementById("optionsContainer").innerHTML = `<p class="text-sm text-center text-stone-400 py-2 font-medium tracking-wide">轉盤已就緒！請點擊右側按鈕進行命運大轉盤 🎉</p>`;
+            document.getElementById("optionsContainer").innerHTML = `<p class="text-xs text-center text-stone-400 py-2 font-medium tracking-wide">轉盤已就緒！請在右側進行命運大轉盤 🎉</p>`;
             
             const badge = document.getElementById("loadedBadge");
             badge.innerText = `已為你載入 ${selectedFoodPool.length} 項高匹配度美味`;
             badge.classList.remove("hidden");
+
+            // 手機版按鍵後平滑捲動至轉盤
+            if (window.innerWidth < 768) {
+                document.getElementById("wheelSection").scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
 
         function renderCandidateList(list) {
@@ -382,7 +400,7 @@
 
             list.forEach((name, index) => {
                 const badge = document.createElement("span");
-                badge.className = "text-sm px-3 py-1.5 font-bold rounded-lg border border-stone-50 shadow-sm animate-fade-in tracking-wide";
+                badge.className = "text-xs px-2.5 py-1 font-bold rounded-lg border border-stone-50 shadow-sm animate-fade-in tracking-wide";
                 badge.style.backgroundColor = pastelColors[index % pastelColors.length];
                 badge.style.color = "#292524";
                 badge.innerText = name;
@@ -448,7 +466,7 @@
             
             const spinBtn = document.getElementById("spinBtn");
             spinBtn.disabled = true;
-            spinBtn.className = "px-10 py-4 bg-stone-200 text-stone-400 font-black font-serif-tc rounded-full shadow-inner cursor-not-allowed text-lg tracking-widest";
+            spinBtn.className = "px-10 py-3.5 bg-stone-200 text-stone-400 font-black font-serif-tc rounded-full shadow-inner cursor-not-allowed text-sm tracking-widest";
             spinBtn.innerText = "命運旋轉中...";
 
             const totalFrames = 180;
@@ -488,7 +506,7 @@
             if (winnerName === "清冰箱料理") {
                 blessingText = `✨ 雞排君眨眨眼說：『太好了，是【清冰箱料理】！這可是開啟個人主廚模式的大好機會：<br>1. 翻出角落所有的剩餘食材。<br>2. 發揮創意來個溫馨大雜燴炒飯或暖心煮麵。<br>3. 懷著感恩的心把它們吃光！動手變出專屬自己熱騰騰的暖心一餐吧！』`;
             } else if (winnerName === "便利商店") {
-                blessingText = `🏪 珍珍歪頭微笑：『選中了萬能的【便利商店】！這代表著生活裡最貼心、最穩定的陪伴。珍珍偷偷推薦你：挑選一盒剛出爐的微波熱騰騰主食，再搭配一顆散發濃育茶香的茶葉蛋，簡單平凡卻是最確定的幸福喔！』`;
+                blessingText = `🏪 珍珍歪頭微笑：『選中了萬能的【便利商店】！這代表著生活裡最貼心、最穩定的陪伴。珍珍偷偷推薦你：挑選一盒剛出爐的微波熱騰騰主食，再搭配一顆散發濃移茶香的茶葉蛋，簡單補給也是最確定的幸福喔！』`;
             } else if (winnerName === "素食料理") {
                 blessingText = `🥬 珍珍用溫柔似水的眼神看著你：『指針停在了【素食料理】。這一定是心靈發出的純淨訊號！今晚來點翠綠鮮甜的清炒時蔬、溫潤甘甜的蔬果高湯吧，清新且完全沒有負擔的美味，能好好撫慰你疲憊的一天。』`;
             } else if (winnerName === "火鍋" || winnerName === "酸菜魚") {
@@ -499,12 +517,16 @@
                 blessingText = `✨ 珍珍與雞排君靠在一起對你說：『命運的指針選擇了【${winnerName}】！這一定是命中注定的緣分。看著它熱氣騰騰上桌的模樣，一口咬下，將今天所有的煩惱和疲憊通通融化吧！祝你用餐愉快，身心都飽飽的喔～』`;
             }
 
-            /* 優化：核心中獎文字套用思源宋體 (font-serif-tc) 與焦糖深茶色，大幅提升儀式感與溫暖質感 */
-            addChatBubble("bot", `🎉 叮咚！轉盤結果出爐囉！<br><br>我們今晚為你選中的靈魂美食是：<br><strong class="block text-3xl md:text-4xl font-serif-tc text-amber-950 font-black my-3 tracking-widest">${winnerName}</strong><br>${blessingText}`);
+            // 手機端中獎時自動滑回頂部看故事
+            if (window.innerWidth < 768) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            addChatBubble("bot", `🎉 叮咚！轉盤結果出爐囉！<br><br>我們今晚為你選中的靈魂美食是：<br><strong class="block text-2xl md:text-4xl font-serif-tc text-amber-950 font-black my-2.5 tracking-widest">${winnerName}</strong><br>${blessingText}`);
 
             const optionsContainer = document.getElementById("optionsContainer");
             optionsContainer.innerHTML = `
-                <button onclick="resetApp()" class="w-full py-3.5 bg-[#E2F0CB] text-[#5A7234] font-extrabold rounded-xl shadow-sm hover:bg-[#D4E8B7] transition-all text-base md:text-lg tracking-wider font-serif-tc">
+                <button onclick="resetApp()" class="w-full py-3 bg-[#E2F0CB] text-[#5A7234] font-extrabold rounded-xl shadow-sm hover:bg-[#D4E8B7] transition-all text-sm md:text-lg tracking-wider font-serif-tc">
                     🔄 重新測驗 / 再玩一次
                 </button>
             `;
@@ -517,9 +539,9 @@
             isSpinning = false;
             
             document.getElementById("chatHistory").innerHTML = `
-                <div class="flex items-start gap-3 animate-fade-in">
-                    <div class="w-9 h-9 rounded-full bg-[#FFE5D9] flex items-center justify-center text-sm shadow-inner shrink-0">🧋</div>
-                    <div class="bg-stone-50 border border-stone-100 rounded-2xl rounded-tl-none p-3.5 max-w-[85%] text-base font-medium leading-relaxed tracking-wide text-stone-800">
+                <div class="flex items-start gap-2.5 animate-fade-in">
+                    <div class="w-8 h-8 rounded-full bg-[#FFE5D9] flex items-center justify-center text-sm shadow-inner shrink-0">🧋</div>
+                    <div class="bg-stone-50 border border-stone-100 rounded-2xl rounded-tl-none p-3 max-w-[85%] text-sm md:text-base font-medium leading-relaxed tracking-wide text-stone-800">
                         重新出發！這次你的靈魂想吃點什麼呢？珍珍和雞排君都在這裡陪你唷。
                     </div>
                 </div>
@@ -530,7 +552,7 @@
             
             const spinBtn = document.getElementById("spinBtn");
             spinBtn.disabled = true;
-            spinBtn.className = "px-10 py-4 bg-stone-200 text-stone-400 font-black font-serif-tc rounded-full shadow-md cursor-not-allowed transition-all text-lg tracking-widest";
+            spinBtn.className = "px-10 py-3 bg-stone-200 text-stone-400 font-black font-serif-tc rounded-full shadow-md cursor-not-allowed transition-all text-sm md:text-lg tracking-widest";
             spinBtn.innerText = "請先完成心靈對話 🔮";
             
             document.getElementById("checkFridge").checked = false;
