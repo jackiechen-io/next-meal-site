@@ -32,7 +32,7 @@
 </head>
 <body class="text-stone-800 min-h-screen flex flex-col antialiased">
 
-    <!-- 頂部看板優化：手機版維持置頂固定，電腦版(md:)改成 relative 隨網頁滾動消失，釋放 100% 垂直視野 -->
+    <!-- 頂部看板 -->
     <header class="bg-[#FFF3CD] border-b border-[#FCE8A6] py-3 md:py-6 px-4 sticky md:relative top-0 z-50 shadow-sm">
         <div class="max-w-4xl mx-auto flex flex-row md:flex-col items-center justify-start md:justify-center gap-3 md:gap-4">
             <!-- 吉祥物 SVG -->
@@ -156,7 +156,7 @@
 
     <!-- 頁尾 -->
     <footer class="py-3 text-center text-[10px] md:text-xs text-stone-400 border-t border-stone-100 bg-white font-medium tracking-wide">
-        © 2026 下一餐吃什麼～日系美食顧問・全端雙端流暢優化版
+        © 2026 下一餐吃什麼～日系美食顧問・硬核預算過濾版
     </footer>
 
     <script>
@@ -219,7 +219,7 @@
                 options: [
                     { label: "早餐 ☀️", value: "breakfast" },
                     { label: "午餐 🍛", value: "lunch" },
-                    { label: "晚餐/宵夜 🌙", value: "dinner" }
+                    { label: "晚餐 🌙", value: "dinner" }
                 ]
             },
             {
@@ -342,28 +342,34 @@
             const targetMeal = userAnswers.meal;
             const pool = foodDatabase[targetMeal] || [];
             
-            let scoredPool = pool.map(food => {
+            // 【核心優化一】：預算硬性過濾 (Strict Filtering) - 拒絕妥協
+            let matchedItems = pool.filter(food => food.price === userAnswers.price);
+            
+            // 安全保底：萬一該時段的該預算「完全沒有任何食物」（例如早餐選奢華等級只剩1樣），則抓相鄰預算，確保轉盤不壞掉
+            if (matchedItems.length < 3) {
+                const backups = pool.filter(food => food.price === (userAnswers.price - 1) || food.price === (userAnswers.price + 1));
+                matchedItems = [...matchedItems, ...backups];
+            }
+
+            // 【核心優化二】：在絕對符合預算的群組內，再根據飢餓度與肉量精確計分
+            let scoredPool = matchedItems.map(food => {
                 let score = 0;
                 if (food.hunger === userAnswers.hunger) score += 3;
-                if (food.price === userAnswers.price) score += 3;
                 if (userAnswers.meat === "sweet") {
-                    if (food.name === "咖啡店" || food.name === "超商現烤麵包") score += 5;
+                    if (food.name === "咖啡店" || food.name === "超商現烤麵包" || food.name === "網美餐廳") score += 5;
                 } else if (food.meat === userAnswers.meat) {
                     score += 3;
                 }
                 return { ...food, score: score };
             });
 
-            let maxScore = Math.max(...scoredPool.map(item => item.score));
-            let matchedItems = scoredPool.filter(item => item.score >= Math.max(3, maxScore - 3));
+            // 依權重分數由高到低排序
+            scoredPool.sort((a, b) => b.score - a.score);
 
-            if (matchedItems.length < 3) {
-                scoredPool.sort((a, b) => b.score - a.score);
-                matchedItems = scoredPool.slice(0, 5);
-            }
+            // 擷取前 6 名最精準的頂級候選
+            let finalSelection = scoredPool.slice(0, 6).map(item => item.name);
 
-            let finalSelection = matchedItems.map(item => item.name);
-
+            // 只有使用者手動勾選的保底備案，才允許跨越預算加入
             const hasFridge = document.getElementById("checkFridge").checked;
             const hasStore = document.getElementById("checkStore").checked;
             
@@ -387,7 +393,6 @@
             badge.innerText = `已為你載入 ${selectedFoodPool.length} 項高匹配度美味`;
             badge.classList.remove("hidden");
 
-            // 手機版按鍵後平滑捲動至轉盤
             if (window.innerWidth < 768) {
                 document.getElementById("wheelSection").scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
@@ -506,18 +511,17 @@
             if (winnerName === "清冰箱料理") {
                 blessingText = `✨ 雞排君眨眨眼說：『太好了，是【清冰箱料理】！這可是開啟個人主廚模式的大好機會：<br>1. 翻出角落所有的剩餘食材。<br>2. 發揮創意來個溫馨大雜燴炒飯或暖心煮麵。<br>3. 懷著感恩的心把它們吃光！動手變出專屬自己熱騰騰的暖心一餐吧！』`;
             } else if (winnerName === "便利商店") {
-                blessingText = `🏪 珍珍歪頭微笑：『選中了萬能的【便利商店】！這代表著生活裡最貼心、最穩定的陪伴。珍珍偷偷推薦你：挑選一盒剛出爐的微波熱騰騰主食，再搭配一顆散發濃移茶香的茶葉蛋，簡單補給也是最確定的幸福喔！』`;
+                blessingText = `🏪 珍珍歪頭微笑：『選中了萬能的【便利商店】！這代表著生活裡最貼心、最穩定的陪伴。珍珍偷偷推薦你：挑選一盒剛出爐的微波熱騰騰主食，再搭配一顆散發濃郁茶香的茶葉蛋，簡單補給也是最確定的幸福喔！』`;
             } else if (winnerName === "素食料理") {
                 blessingText = `🥬 珍珍用溫柔似水的眼神看著你：『指針停在了【素食料理】。這一定是心靈發出的純淨訊號！今晚來點翠綠鮮甜的清炒時蔬、溫潤甘甜的蔬果高湯吧，清新且完全沒有負擔的美味，能好好撫慰你疲憊的一天。』`;
             } else if (winnerName === "火鍋" || winnerName === "酸菜魚") {
-                blessingText = `🍲 珍珍和雞排君一起拍手歡呼：『大獎揭曉～是讓人熱血沸騰的【${winnerName}】！想像一下，鮮嫩的肉片在滾燙的湯底裡歡快翻滾，白色的煙霧徐徐升騰，香氣撲鼻。這絕對是熱量與靈魂的雙重極致治癒！快出發吧！』`;
+                blessingText = `🍲 珍珍和雞排君一起拍手歡呼：『大獎揭曉～是讓人熱血沸騰的【${winnerName}】！想像一下，鮮嫩的肉片在滾燙的湯底裡歡快翻滾，白色的煙霧徐徐升騰，香氣鋪鼻。這絕對是熱量與靈魂的雙重極致治癒！快出發吧！』`;
             } else if (winnerName === "中式燒臘" || winnerName === "牛排" || winnerName === "韓式炸雞") {
                 blessingText = `🍖 雞排君興奮得閃閃發光：『天啊！是讓人垂涎三尺的【${winnerName}】！光是想到油亮酥脆的外皮在砧板上發出誘人聲響，或是飽滿多汁的肉塊在嘴裡綻放脂香，口水就忍不住啦！這是你今天努力應得的極致奢華犒賞！』`;
             } else {
                 blessingText = `✨ 珍珍與雞排君靠在一起對你說：『命運的指針選擇了【${winnerName}】！這一定是命中注定的緣分。看著它熱氣騰騰上桌的模樣，一口咬下，將今天所有的煩惱和疲憊通通融化吧！祝你用餐愉快，身心都飽飽的喔～』`;
             }
 
-            // 手機端中獎時自動滑回頂部看故事
             if (window.innerWidth < 768) {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
