@@ -1,764 +1,544 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>下一餐吃什麼~</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            rice: "#F8F9FA",
-            washi: "#FFFDF7",
-            kinako: "#E8CFAE",
-            milk: "#F6E8D8",
-            custard: "#FFF1B8",
-            sakura: "#F7C8C9",
-            momo: "#F7D9C4",
-            hojicha: "#B88B64",
-            sumi: "#514841"
-          },
-          boxShadow: {
-            soft: "0 22px 60px rgba(120, 86, 62, .14)",
-            tiny: "0 10px 24px rgba(120, 86, 62, .10)"
-          }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>下一餐吃什麼~ 靈魂美食顧問</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@600;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            /* 全域基礎字型：思源黑體搭配高質感系統黑體 */
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang TC", "Microsoft JhengHei", sans-serif;
+            background-color: #FDFBF7; /* 改為極淡的暖米杏色背景，比冷白更有繪本溫度 */
+            font-size: 1.05rem;
+            letter-spacing: 0.04em; /* 全域字距微調寬，讓繁體字更具呼吸感 */
         }
-      }
-    };
-  </script>
-  <style>
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      color: #514841;
-      background:
-        radial-gradient(circle at 18% 10%, rgba(255, 241, 184, .42), transparent 28%),
-        radial-gradient(circle at 86% 18%, rgba(247, 200, 201, .34), transparent 24%),
-        linear-gradient(180deg, #fffdf7 0%, #f8f9fa 45%, #f6eee5 100%);
-      font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
-      overflow-x: hidden;
-    }
-    .dark body {
-      color: #fff6eb;
-      background:
-        radial-gradient(circle at 20% 9%, rgba(184, 139, 100, .28), transparent 28%),
-        radial-gradient(circle at 88% 18%, rgba(247, 200, 201, .16), transparent 26%),
-        linear-gradient(180deg, #26221f 0%, #302923 100%);
-    }
-    body:before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: .22;
-      background-image:
-        radial-gradient(rgba(184,139,100,.16) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.26) 1px, transparent 1px);
-      background-size: 22px 22px, 74px 74px;
-      z-index: 0;
-    }
-    .washi {
-      background: rgba(255, 253, 247, .78);
-      border: 1px solid rgba(255, 255, 255, .82);
-      box-shadow: 0 22px 60px rgba(120, 86, 62, .14);
-      backdrop-filter: blur(22px);
-    }
-    .dark .washi {
-      background: rgba(55, 48, 42, .82);
-      border-color: rgba(255,255,255,.10);
-    }
-    .bubble { animation: bubbleIn .35s cubic-bezier(.22, .9, .22, 1.18); }
-    @keyframes bubbleIn {
-      from { opacity: 0; transform: translateY(10px) scale(.97); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    .mascot-float { animation: mascotFloat 4.8s ease-in-out infinite; transform-origin: 50% 60%; }
-    @keyframes mascotFloat {
-      0%, 100% { transform: translateY(0) rotate(-.4deg); }
-      50% { transform: translateY(-9px) rotate(.7deg); }
-    }
-    .sparkle-twinkle { animation: twinkle 2.2s ease-in-out infinite; transform-origin: center; }
-    .sparkle-twinkle:nth-child(2) { animation-delay: .3s; }
-    .sparkle-twinkle:nth-child(3) { animation-delay: .65s; }
-    @keyframes twinkle {
-      0%,100% { opacity: .48; transform: scale(.92); }
-      50% { opacity: 1; transform: scale(1.08); }
-    }
-    .float-heart, .paper-flower {
-      position: fixed;
-      pointer-events: none;
-      z-index: 1;
-      opacity: .58;
-    }
-    .float-heart {
-      width: 13px;
-      height: 13px;
-      background: #f7c8c9;
-      transform: rotate(45deg);
-      animation: heartUp 10s linear infinite;
-    }
-    .float-heart:before, .float-heart:after {
-      content: "";
-      position: absolute;
-      width: 13px;
-      height: 13px;
-      background: #f7c8c9;
-      border-radius: 50%;
-    }
-    .float-heart:before { left: -6.5px; }
-    .float-heart:after { top: -6.5px; }
-    @keyframes heartUp {
-      0% { transform: translateY(108vh) rotate(45deg); opacity: 0; }
-      15% { opacity: .54; }
-      100% { transform: translateY(-14vh) rotate(45deg); opacity: 0; }
-    }
-    .paper-flower {
-      width: 16px;
-      height: 16px;
-      animation: flowerFall 13s linear infinite;
-    }
-    .paper-flower:before, .paper-flower:after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: 80% 20% 80% 20%;
-      background: rgba(255, 241, 184, .74);
-      transform: rotate(45deg);
-    }
-    .paper-flower:after {
-      background: rgba(247, 217, 196, .78);
-      transform: rotate(-45deg);
-    }
-    @keyframes flowerFall {
-      0% { transform: translate3d(0,-12vh,0) rotate(0deg); opacity: 0; }
-      12% { opacity: .72; }
-      100% { transform: translate3d(44px,112vh,0) rotate(420deg); opacity: 0; }
-    }
-    .option-btn {
-      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
-    }
-    .option-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 13px 28px rgba(120, 86, 62, .14);
-    }
-    .wheel-aura:before {
-      content: "";
-      position: absolute;
-      inset: -18px;
-      border-radius: 999px;
-      background: conic-gradient(from 0deg, rgba(255,241,184,.12), rgba(247,200,201,.5), rgba(246,232,216,.2), rgba(255,241,184,.64), rgba(255,241,184,.12));
-      filter: blur(20px);
-      animation: auraSpin 5s linear infinite;
-      opacity: .78;
-    }
-    @keyframes auraSpin { to { transform: rotate(360deg); } }
-    .modal-in { animation: modalIn .42s cubic-bezier(.22,.9,.22,1.12); }
-    @keyframes modalIn {
-      from { opacity: 0; transform: translateY(16px) scale(.96); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    input[type="checkbox"] { accent-color: #b88b64; }
-  </style>
+        /* 自訂專屬文青宋體類別 */
+        .font-serif-tc {
+            font-family: 'Noto Serif TC', "PingFang TC", "Microsoft JhengHei", serif;
+        }
+        /* 自訂馬卡龍滾動條 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FDFBF7;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FFE5D9;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FCD5CE;
+        }
+    </style>
 </head>
-<body class="min-h-screen">
-  <div id="ambientLayer"></div>
+<body class="text-stone-800 min-h-screen flex flex-col antialiased">
 
-  <main class="relative z-10 min-h-screen p-4 sm:p-6 lg:p-8">
-    <section class="mx-auto grid min-h-[calc(100vh-2rem)] max-w-7xl grid-cols-1 gap-5 lg:grid-cols-[40%_60%] lg:gap-7">
-      <aside class="washi flex min-h-[52vh] flex-col overflow-hidden rounded-[32px]">
-        <header class="flex items-center justify-between gap-4 border-b border-[#eadbc8]/70 px-5 py-4 dark:border-white/10">
-          <div>
-            <p class="text-xs font-medium tracking-[.24em] text-hojicha dark:text-[#ecd7bf]">SOUL FOOD GUIDE</p>
-            <h1 class="mt-1 text-2xl font-semibold tracking-normal text-sumi dark:text-[#fff8ee]">下一餐吃什麼~</h1>
-          </div>
-          <button id="darkToggle" class="grid h-11 w-11 place-items-center rounded-full bg-[#fff8e8] text-hojicha shadow-tiny transition hover:scale-105 dark:bg-[#4a4038] dark:text-[#fff1df]" aria-label="切換深色模式">
-            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
-              <path d="M12 3v2.2M12 18.8V21M4.22 4.22l1.56 1.56M18.22 18.22l1.56 1.56M3 12h2.2M18.8 12H21M4.22 19.78l1.56-1.56M18.22 5.78l1.56-1.56" stroke-linecap="round"/>
-              <circle cx="12" cy="12" r="4.2" fill="currentColor" opacity=".16"/>
-            </svg>
-          </button>
-        </header>
+    <header class="bg-[#FFF3CD] border-b border-[#FCE8A6] py-9 px-4 text-center sticky top-0 z-50 shadow-sm">
+        <div class="max-w-4xl mx-auto flex flex-col items-center justify-center gap-4">
+            <div class="w-56 h-28 flex items-center justify-center">
+                <svg viewBox="0 0 400 200" class="w-full h-full drop-shadow-md">
+                    <path d="M 195 45 C 190 35, 175 35, 175 50 C 175 65, 195 80, 195 80 C 195 80, 215 65, 215 50 C 215 35, 200 35, 195 45 Z" fill="#FFB5A7" opacity="0.8"/>
+                    <path d="M 60 30 L 65 35 L 60 40 L 55 35 Z" fill="#FFF" />
+                    <path d="M 340 50 L 345 55 L 340 60 L 335 55 Z" fill="#FFF" />
+                    <circle cx="210" cy="120" r="4" fill="#FFCAD4" opacity="0.6"/>
+                    <circle cx="160" cy="60" r="5" fill="#FFCAD4" opacity="0.6"/>
+                    
+                    <g id="zhen-zhen">
+                        <path d="M 110 70 L 120 150 C 121 158, 169 158, 170 150 L 180 70 Z" fill="#E6CCB2" stroke="#7F5539" stroke-width="4" stroke-linejoin="round"/>
+                        <line x1="150" y1="70" x2="155" y2="35" stroke="#B7B7A4" stroke-width="10" stroke-linecap="round"/>
+                        <path d="M 105 70 L 185 70" stroke="#7F5539" stroke-width="4" stroke-linecap="round"/>
+                        <circle cx="130" cy="140" r="7" fill="#2F1F17"/>
+                        <circle cx="145" cy="143" r="7" fill="#2F1F17"/>
+                        <circle cx="160" cy="138" r="7" fill="#2F1F17"/>
+                        <circle cx="138" cy="128" r="7" fill="#2F1F17"/>
+                        <circle cx="154" cy="126" r="7" fill="#2F1F17"/>
+                        <circle cx="135" cy="98" r="8" fill="#2F1F17"/>
+                        <circle cx="133" cy="95" r="3" fill="#FFF"/>
+                        <circle cx="160" cy="98" r="8" fill="#2F1F17"/>
+                        <circle cx="158" cy="95" r="3" fill="#FFF"/>
+                        <path d="M 144 106 Q 147 111, 151 106" fill="none" stroke="#2F1F17" stroke-width="2.5" stroke-linecap="round"/>
+                        <ellipse cx="125" cy="105" rx="5" ry="3" fill="#FFB5A7"/>
+                        <ellipse cx="170" cy="105" rx="5" ry="3" fill="#FFB5A7"/>
+                        <path d="M 172 110 Q 190 115, 185 125" fill="none" stroke="#7F5539" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M 130 155 Q 130 168, 135 168" fill="none" stroke="#7F5539" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M 160 155 Q 160 168, 155 168" fill="none" stroke="#7F5539" stroke-width="4" stroke-linecap="round"/>
+                    </g>
 
-        <div class="px-4 pb-2 pt-4 sm:px-5">
-          <div class="rounded-[28px] bg-gradient-to-b from-[#fff9ee]/80 to-[#f8e7d7]/70 px-3 py-4 shadow-tiny dark:from-[#453a32]/80 dark:to-[#372f2a]/80">
-            <svg class="mascot-float mx-auto block h-auto w-full max-w-[340px]" viewBox="0 0 420 278" role="img" aria-label="可愛的珍珍和雞排君抱在一起">
-              <defs>
-                <linearGradient id="cupGlass" x1="0" x2="0" y1="0" y2="1">
-                  <stop offset="0" stop-color="#FFFFFF" stop-opacity=".86"/>
-                  <stop offset="1" stop-color="#FFFFFF" stop-opacity=".44"/>
-                </linearGradient>
-                <linearGradient id="teaFill" x1="0" x2="0" y1="0" y2="1">
-                  <stop offset="0" stop-color="#E9C7A3"/>
-                  <stop offset=".58" stop-color="#D9A978"/>
-                  <stop offset="1" stop-color="#C88F61"/>
-                </linearGradient>
-                <radialGradient id="fried" cx=".42" cy=".3" r=".78">
-                  <stop offset="0" stop-color="#FFE8A7"/>
-                  <stop offset=".58" stop-color="#F5C464"/>
-                  <stop offset="1" stop-color="#E5A342"/>
-                </radialGradient>
-                <filter id="mascotShadow" x="-20%" y="-20%" width="140%" height="150%">
-                  <feDropShadow dx="0" dy="10" stdDeviation="8" flood-color="#986d50" flood-opacity=".20"/>
-                </filter>
-              </defs>
-
-              <g class="sparkle-twinkle">
-                <path d="M50 58l7 15 15 7-15 7-7 15-7-15-15-7 15-7z" fill="#FFF1B8"/>
-                <path d="M348 45l5 12 12 5-12 5-5 12-5-12-12-5 12-5z" fill="#F7C8C9"/>
-                <circle cx="48" cy="198" r="7" fill="#F7D9C4"/>
-                <circle cx="365" cy="204" r="8" fill="#FFF7D8"/>
-              </g>
-              <g class="sparkle-twinkle">
-                <path d="M91 39c8-18 34-1 0 23C57 38 83 21 91 39z" fill="#F7C8C9" opacity=".82"/>
-                <path d="M323 224c7-16 31-1 0 21-31-22-7-37 0-21z" fill="#F7C8C9" opacity=".74"/>
-                <path d="M382 126c8-10 22 3 4 17-2 2-6 2-8 0-18-14-4-27 4-17z" fill="#FFF1B8" opacity=".9"/>
-              </g>
-
-              <g filter="url(#mascotShadow)">
-                <g transform="translate(212 52)">
-                  <path d="M71 12c33 0 70 28 82 65 15 45-3 91-43 112-41 21-90 10-116-27-24-34-24-79-1-113 17-25 44-37 78-37z" fill="url(#fried)"/>
-                  <path d="M33 44c14-8 31-13 50-13M17 73c25-12 57-15 96-8M18 108c29-11 66-11 111 2M42 151c27 12 59 10 93-8" fill="none" stroke="#C88734" stroke-width="5.5" stroke-linecap="round" opacity=".28"/>
-                  <circle cx="50" cy="96" r="21" fill="#FFF3C9" opacity=".55"/>
-                  <circle cx="114" cy="97" r="21" fill="#FFF3C9" opacity=".55"/>
-                  <path d="M39 88q12 15 25 0M103 88q12 15 25 0" fill="none" stroke="#6E4B36" stroke-width="7" stroke-linecap="round"/>
-                  <path d="M77 122q15 15 31 0" fill="none" stroke="#6E4B36" stroke-width="6" stroke-linecap="round"/>
-                  <circle cx="44" cy="118" r="8" fill="#F5A6A8" opacity=".72"/>
-                  <circle cx="124" cy="119" r="8" fill="#F5A6A8" opacity=".72"/>
-                  <path d="M22 129c-22 4-25 30-4 34M145 128c23 4 26 31 5 35" fill="none" stroke="#7C563E" stroke-width="8" stroke-linecap="round"/>
-                  <path d="M51 186l-7 22M121 184l10 22" stroke="#7C563E" stroke-width="8" stroke-linecap="round"/>
-                  <ellipse cx="42" cy="214" rx="18" ry="8" fill="#7C563E" opacity=".22"/>
-                  <ellipse cx="136" cy="214" rx="18" ry="8" fill="#7C563E" opacity=".22"/>
-                </g>
-
-                <g transform="translate(70 28)">
-                  <path d="M62 9h98l-13 34H73z" fill="#F7C8C9" stroke="#C59B87" stroke-width="4" stroke-linejoin="round"/>
-                  <path d="M107 34l58-10 5 22-58 10z" fill="#F7AEB4" stroke="#B88776" stroke-width="5" stroke-linejoin="round"/>
-                  <path d="M82 36L55 153c-10 43 18 82 63 82h22c45 0 73-39 63-82L176 36z" fill="url(#cupGlass)" stroke="#D8C2AE" stroke-width="5"/>
-                  <path d="M66 111h126l-14 68c-6 29-27 49-61 49h-2c-34 0-55-20-61-49z" fill="url(#teaFill)" opacity=".94"/>
-                  <path d="M76 134c22 8 45 8 68 0s42-8 58 0" fill="none" stroke="#F4D3B5" stroke-width="7" stroke-linecap="round" opacity=".48"/>
-                  <circle cx="92" cy="190" r="9" fill="#42302A"/>
-                  <circle cx="117" cy="196" r="9" fill="#42302A"/>
-                  <circle cx="143" cy="193" r="9" fill="#42302A"/>
-                  <circle cx="168" cy="187" r="9" fill="#42302A"/>
-                  <circle cx="95" cy="149" r="13" fill="#49332B"/>
-                  <circle cx="153" cy="149" r="13" fill="#49332B"/>
-                  <circle cx="99" cy="144" r="4" fill="#fff"/>
-                  <circle cx="157" cy="144" r="4" fill="#fff"/>
-                  <ellipse cx="76" cy="168" rx="12" ry="8" fill="#F7AEB4" opacity=".78"/>
-                  <ellipse cx="174" cy="168" rx="12" ry="8" fill="#F7AEB4" opacity=".78"/>
-                  <path d="M111 166q14 12 30 0" fill="none" stroke="#49332B" stroke-width="5.5" stroke-linecap="round"/>
-                  <path d="M72 168c-22 2-28 27-7 34M183 168c22 2 28 27 7 34" fill="none" stroke="#8B6653" stroke-width="8" stroke-linecap="round"/>
-                  <path d="M98 229l-7 20M151 229l7 20" stroke="#8B6653" stroke-width="8" stroke-linecap="round"/>
-                  <ellipse cx="86" cy="252" rx="17" ry="8" fill="#8B6653" opacity=".20"/>
-                  <ellipse cx="165" cy="252" rx="17" ry="8" fill="#8B6653" opacity=".20"/>
-                </g>
-                <path d="M205 178c21 18 46 18 68 0" fill="none" stroke="#8B6653" stroke-width="10" stroke-linecap="round"/>
-              </g>
-            </svg>
-          </div>
-        </div>
-
-        <div id="chatLog" class="flex-1 space-y-3 overflow-y-auto px-5 pb-4 pt-2"></div>
-        <div id="inputArea" class="border-t border-[#eadbc8]/70 bg-white/35 p-4 dark:border-white/10 dark:bg-black/10"></div>
-      </aside>
-
-      <section class="washi relative flex min-h-[50vh] flex-col overflow-hidden rounded-[32px] p-5 sm:p-7">
-        <div class="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p class="text-xs font-medium tracking-[.24em] text-hojicha dark:text-[#ecd7bf]">FATE WHEEL</p>
-            <h2 class="mt-2 text-2xl font-semibold tracking-normal text-sumi dark:text-[#fff8ee]">讓今天的香氣慢慢轉出來</h2>
-          </div>
-          <button id="againTop" class="hidden rounded-full bg-[#fff8e8] px-4 py-2 text-sm font-medium text-hojicha shadow-tiny transition hover:bg-custard dark:bg-[#4a4038] dark:text-[#fff1df]">再玩一次</button>
-        </div>
-
-        <div class="mt-6 grid flex-1 place-items-center">
-          <div class="relative w-full max-w-[620px]">
-            <div class="pointer-events-none absolute left-1/2 top-[-5px] z-20 -translate-x-1/2">
-              <svg width="54" height="62" viewBox="0 0 54 62" aria-hidden="true">
-                <path d="M27 58C20 44 9 29 9 17 9 8 16 3 27 3s18 5 18 14c0 12-11 27-18 41z" fill="#B88B64" stroke="#FFFDF7" stroke-width="5"/>
-                <circle cx="27" cy="17" r="5" fill="#FFF1B8"/>
-              </svg>
+                    <g id="ji-pai-jun">
+                        <path d="M 215 125 C 190 100, 210 65, 240 60 C 270 55, 300 70, 310 95 C 320 120, 290 150, 260 152 C 235 154, 225 135, 215 125 Z" fill="#FFB703" stroke="#FB8500" stroke-width="4" stroke-linejoin="round"/>
+                        <circle cx="235" cy="85" r="2" fill="#FB8500"/>
+                        <circle cx="285" cy="80" r="2" fill="#FB8500"/>
+                        <circle cx="290" cy="115" r="2" fill="#FB8500"/>
+                        <circle cx="250" cy="135" r="2" fill="#FB8500"/>
+                        <path d="M 240 95 Q 248 90, 255 96" fill="none" stroke="#2F1F17" stroke-width="3" stroke-linecap="round"/>
+                        <path d="M 270 95 Q 278 90, 285 96" fill="none" stroke="#2F1F17" stroke-width="3" stroke-linecap="round"/>
+                        <path d="M 253 108 Q 262 120, 270 108 Z" fill="#D00000" stroke="#2F1F17" stroke-width="2"/>
+                        <ellipse cx="238" cy="102" rx="5" ry="3" fill="#FFB5A7"/>
+                        <ellipse cx="288" cy="102" rx="5" ry="3" fill="#FFB5A7"/>
+                        <path d="M 225 112 Q 195 112, 190 122" fill="none" stroke="#FB8500" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M 245 150 Q 242 165, 248 165" fill="none" stroke="#FB8500" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M 275 148 Q 278 163, 272 163" fill="none" stroke="#FB8500" stroke-width="4" stroke-linecap="round"/>
+                    </g>
+                </svg>
             </div>
-            <div class="wheel-aura relative mx-auto aspect-square w-full rounded-full">
-              <canvas id="wheelCanvas" class="relative z-10 h-full w-full rounded-full drop-shadow-2xl" width="900" height="900"></canvas>
-              <canvas id="fxCanvas" class="pointer-events-none absolute inset-0 z-30 h-full w-full rounded-full" width="900" height="900"></canvas>
+            <div>
+                <h1 class="text-3xl md:text-4xl font-black font-serif-tc text-amber-950 tracking-widest">下一餐吃什麼～</h1>
+                <p class="text-sm md:text-base text-stone-500 font-medium mt-2 tracking-wide">珍珍與雞排君，用溫度撫慰你的選擇障礙 ✨</p>
             </div>
-          </div>
         </div>
+    </header>
 
-        <div class="mt-5 flex flex-col items-center gap-3">
-          <button id="spinBtn" disabled class="w-full max-w-sm rounded-full bg-hojicha px-7 py-4 text-base font-semibold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-[#a77b56] disabled:cursor-not-allowed disabled:opacity-45">啟動命運轉盤</button>
-          <p id="wheelHint" class="text-center text-sm leading-6 text-[#8b715f] dark:text-[#ead8c5]">先和珍珍、雞排君聊幾句，轉盤就會慢慢亮起來。</p>
-        </div>
+    <main class="max-w-6xl w-full mx-auto flex-1 grid grid-cols-1 md:grid-cols-12 gap-6 p-4 md:p-6 overflow-hidden">
+        
+        <section class="md:col-span-5 bg-white rounded-2xl border border-stone-100 shadow-sm flex flex-col h-[580px] md:h-[680px]">
+            <div id="chatHistory" class="flex-1 p-5 overflow-y-auto space-y-5 flex flex-col">
+                <div class="flex items-start gap-3 animate-fade-in">
+                    <div class="w-9 h-9 rounded-full bg-[#FFE5D9] flex items-center justify-center text-sm shadow-inner shrink-0">🧋</div>
+                    <div class="bg-stone-50 border border-stone-100 rounded-2xl rounded-tl-none p-4 max-w-[85%] text-base font-medium leading-relaxed tracking-wide text-stone-800">
+                        嗨！終於等到你了～肚子空空的滋味很難受吧？別擔心，我和雞排君會幫你找到最完美的下一餐！
+                    </div>
+                </div>
+            </div>
 
-        <div class="mt-5 rounded-[26px] border border-white/70 bg-white/50 p-4 shadow-tiny dark:border-white/10 dark:bg-black/10">
-          <div class="flex items-center justify-between gap-3">
-            <h3 class="font-medium text-sumi dark:text-[#fff8ee]">最近的美味記憶</h3>
-            <button id="clearHistory" class="text-xs text-hojicha underline-offset-4 hover:underline dark:text-[#ecd7bf]">清空</button>
-          </div>
-          <div id="historyList" class="mt-3 flex flex-wrap gap-2 text-sm"></div>
-        </div>
-      </section>
-    </section>
-  </main>
+            <div id="interactionArea" class="p-5 border-t border-stone-50 bg-[#FFFDF9] rounded-b-2xl">
+                <div id="optionsContainer" class="grid grid-cols-1 gap-2.5"></div>
+                
+                <div id="backupContainer" class="hidden border-t border-stone-100 pt-4 mt-3">
+                    <p class="text-xs font-bold text-stone-400 mb-3 text-center tracking-wider">✨ 如果有需要，可以額外勾選保底備案：</p>
+                    <div class="flex justify-around items-center bg-white p-4 rounded-xl border border-stone-100 shadow-sm">
+                        <label class="flex items-center gap-2.5 text-base font-bold text-stone-600 cursor-pointer select-none tracking-wide">
+                            <input type="checkbox" id="checkFridge" class="w-5 h-5 accent-[#FFB5A7]"> 清冰箱料理
+                        </label>
+                        <label class="flex items-center gap-2.5 text-base font-bold text-stone-600 cursor-pointer select-none tracking-wide">
+                            <input type="checkbox" id="checkStore" class="w-5 h-5 accent-[#FFB5A7]"> 便利商店
+                        </label>
+                    </div>
+                    <button onclick="confirmAndLoadWheel()" class="w-full mt-4 py-3.5 bg-[#D4A373] text-white font-bold rounded-xl shadow-md hover:bg-[#C39364] transition-all text-base font-serif-tc tracking-widest">
+                        🥰 確認並載入轉盤
+                    </button>
+                </div>
+            </div>
+        </section>
 
-  <div id="resultModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#514841]/30 p-4 backdrop-blur-sm">
-    <article class="modal-in max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-[30px] border border-white/80 bg-[#fffdf7] p-6 shadow-soft dark:border-white/10 dark:bg-[#3a312b]">
-      <div class="flex items-start justify-between gap-4">
-        <div>
-          <p class="text-sm text-hojicha dark:text-[#ecd7bf]">今晚的命運香氣</p>
-          <h2 id="resultTitle" class="mt-1 text-3xl font-semibold text-sumi dark:text-[#fff8ee]"></h2>
-        </div>
-        <button id="closeModal" class="grid h-10 w-10 place-items-center rounded-full bg-[#fff8e8] text-hojicha shadow-tiny dark:bg-[#4a4038] dark:text-[#fff1df]" aria-label="關閉結果">
-          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
-        </button>
-      </div>
-      <p id="resultText" class="mt-4 leading-8 text-[#6c5b4f] dark:text-[#f3dfca]"></p>
-      <div id="specialSteps" class="mt-4 hidden rounded-2xl bg-[#fff8e8] p-4 leading-7 text-[#6c5b4f] dark:bg-black/14 dark:text-[#f3dfca]"></div>
-      <div class="mt-6 flex flex-col gap-3 sm:flex-row">
-        <button id="againModal" class="flex-1 rounded-full bg-hojicha px-5 py-3 font-semibold text-white shadow-tiny transition hover:bg-[#a77b56]">再玩一次</button>
-        <button id="keepModal" class="flex-1 rounded-full bg-[#fff8e8] px-5 py-3 font-semibold text-hojicha shadow-tiny transition hover:bg-custard dark:bg-[#4a4038] dark:text-[#fff1df]">收下這份晚餐</button>
-      </div>
-    </article>
-  </div>
+        <section class="md:col-span-7 flex flex-col items-center justify-center gap-5 bg-white rounded-2xl border border-stone-100 shadow-sm p-6">
+            
+            <div class="relative w-full max-w-[340px] aspect-square flex items-center justify-center">
+                <div class="absolute -top-2 z-20 w-0 h-0 border-l-[14px] border-l-transparent border-r-[14px] border-r-transparent border-t-[26px] border-t-[#FB8500] drop-shadow-sm"></div>
+                <canvas id="wheelCanvas" width="340" height="340" class="w-full h-full rounded-full border-4 border-[#FFF3CD] shadow-md transition-transform duration-75"></canvas>
+                <div class="absolute w-9 h-9 rounded-full bg-white border-4 border-[#D4A373] shadow-inner z-10"></div>
+            </div>
 
-  <script>
-    const foodDatabase = [
-      {name:"傳統豆漿油條",meal:"早餐",price:1,hunger:2,meat:1},{name:"古早味粉漿蛋餅",meal:"早餐",price:1,hunger:2,meat:2},{name:"中式飯糰",meal:"早餐",price:1,hunger:2,meat:2},{name:"傳統乾麵黑白切",meal:"早餐",price:1,hunger:2,meat:2},{name:"連鎖美式早點",meal:"早餐",price:1,hunger:2,meat:2},{name:"炭烤吐司專賣店",meal:"早餐",price:1,hunger:2,meat:2},{name:"現烤貝果可頌堡",meal:"早餐",price:2,hunger:2,meat:1},{name:"質感早午餐",meal:"早餐",price:3,hunger:2,meat:2},{name:"鐵板麵大冰奶",meal:"早餐",price:1,hunger:3,meat:2},{name:"超商現烤麵包",meal:"早餐",price:1,hunger:1,meat:1},{name:"中式粥品",meal:"早餐",price:1,hunger:2,meat:2},{name:"中式水餃",meal:"早餐",price:1,hunger:2,meat:3},
-      {name:"火鍋",meal:"午餐",price:3,hunger:3,meat:3},{name:"牛肉麵",meal:"午餐",price:2,hunger:3,meat:3},{name:"牛排",meal:"午餐",price:3,hunger:3,meat:3},{name:"港式料理",meal:"午餐",price:3,hunger:2,meat:2},{name:"炒飯",meal:"午餐",price:1,hunger:2,meat:2},{name:"中式料理",meal:"午餐",price:2,hunger:2,meat:2},{name:"泰式料理",meal:"午餐",price:3,hunger:2,meat:2},{name:"酸菜魚",meal:"午餐",price:3,hunger:3,meat:3},{name:"黃燜雞",meal:"午餐",price:2,hunger:3,meat:3},{name:"日式料理",meal:"午餐",price:3,hunger:2,meat:2},{name:"生魚片",meal:"午餐",price:3,hunger:1,meat:3},{name:"吃到飽",meal:"午餐",price:3,hunger:3,meat:3},{name:"網美餐廳",meal:"午餐",price:3,hunger:2,meat:2},{name:"速食店",meal:"午餐",price:2,hunger:2,meat:3},{name:"燒烤店",meal:"午餐",price:3,hunger:3,meat:3},{name:"咖啡店",meal:"午餐",price:2,hunger:1,meat:1},{name:"路邊小吃",meal:"午餐",price:1,hunger:2,meat:2},{name:"客家料理",meal:"午餐",price:2,hunger:2,meat:3},{name:"中式燒臘",meal:"午餐",price:2,hunger:3,meat:3},{name:"南洋雞飯",meal:"午餐",price:2,hunger:2,meat:3},{name:"日式丼飯",meal:"午餐",price:2,hunger:2,meat:3},{name:"鴨肉飯",meal:"午餐",price:1,hunger:2,meat:3},{name:"中式粥品",meal:"午餐",price:1,hunger:2,meat:2},{name:"中式水餃",meal:"午餐",price:1,hunger:2,meat:3},{name:"素食料理",meal:"午餐",price:2,hunger:2,meat:1},
-      {name:"火鍋",meal:"晚餐",price:3,hunger:3,meat:3},{name:"牛肉麵",meal:"晚餐",price:2,hunger:3,meat:3},{name:"牛排",meal:"晚餐",price:3,hunger:3,meat:3},{name:"港式料理",meal:"晚餐",price:3,hunger:2,meat:2},{name:"炒飯",meal:"晚餐",price:1,hunger:2,meat:2},{name:"中式料理",meal:"晚餐",price:2,hunger:2,meat:2},{name:"泰式料理",meal:"晚餐",price:3,hunger:2,meat:2},{name:"酸菜魚",meal:"晚餐",price:3,hunger:3,meat:3},{name:"黃燜雞",meal:"晚餐",price:2,hunger:3,meat:3},{name:"日式料理",meal:"晚餐",price:3,hunger:2,meat:2},{name:"生魚片",meal:"晚餐",price:3,hunger:1,meat:3},{name:"吃到飽",meal:"晚餐",price:3,hunger:3,meat:3},{name:"網美餐廳",meal:"晚餐",price:3,hunger:2,meat:2},{name:"速食店",meal:"晚餐",price:2,hunger:2,meat:3},{name:"燒烤店",meal:"晚餐",price:3,hunger:3,meat:3},{name:"咖啡店",meal:"晚餐",price:2,hunger:1,meat:1},{name:"路邊小吃",meal:"晚餐",price:1,hunger:2,meat:2},{name:"客家料理",meal:"晚餐",price:2,hunger:2,meat:3},{name:"中式燒臘",meal:"晚餐",price:2,hunger:3,meat:3},{name:"南洋雞飯",meal:"晚餐",price:2,hunger:2,meat:3},{name:"日式丼飯",meal:"晚餐",price:2,hunger:2,meat:3},{name:"鴨肉飯",meal:"晚餐",price:1,hunger:2,meat:3},{name:"中式粥品",meal:"晚餐",price:1,hunger:2,meat:2},{name:"中式水餃",meal:"晚餐",price:1,hunger:2,meat:3},{name:"素食料理",meal:"晚餐",price:2,hunger:2,meat:1},{name:"鹹酥雞",meal:"晚餐",price:2,hunger:2,meat:3},{name:"鹽水雞",meal:"晚餐",price:2,hunger:1,meat:2},{name:"夜市小吃",meal:"晚餐",price:2,hunger:2,meat:3},{name:"韓式炸雞",meal:"晚餐",price:3,hunger:2,meat:3}
-    ];
+            <button id="spinBtn" disabled onclick="spinWheel()" class="px-10 py-3.5 bg-stone-200 text-stone-400 font-black font-serif-tc rounded-full shadow-md cursor-not-allowed transition-all text-lg tracking-widest">
+                請先完成心靈對話 🔮
+            </button>
+            
+            <div id="loadedBadge" class="hidden text-xs px-4 py-1.5 bg-[#E2F0CB] text-[#5A7234] rounded-full font-bold tracking-wide"></div>
 
-    const questions = [
-      {key:"meal", text:"今天想和我們一起度過哪一餐呢？", options:[{label:"早餐",value:"早餐"},{label:"午餐",value:"午餐"},{label:"晚餐",value:"晚餐"}]},
-      {key:"hunger", text:"現在肚子有多餓呢？", options:[{label:"嘴饞微餓",value:1},{label:"剛剛好",value:2},{label:"能吃下一頭牛",value:3}]},
-      {key:"taste", text:"當下最想念哪種滿足感？", options:[{label:"清淡暖胃／想吃素",value:{meat:1,sweet:false}},{label:"鹹香濃郁",value:{meat:2,sweet:false}},{label:"想大口吃肉",value:{meat:3,sweet:false}},{label:"甜滋滋",value:{meat:1,sweet:true}}]},
-      {key:"people", text:"今天幾個人一起吃？", options:[{label:"享受孤獨單身",value:"solo"},{label:"甜蜜雙人",value:"pair"},{label:"溫馨多人",value:"group"}]},
-      {key:"price", text:"今天荷包心情如何？", options:[{label:"銅板省錢",value:1},{label:"正常消費",value:2},{label:"偶爾奢華一下",value:3}]},
-      {key:"distance", text:"今天願意走多遠？", options:[{label:"只想在巷口",value:"near"},{label:"10分鐘路程",value:"mid"},{label:"展開美食大冒險",value:"far"}]}
-    ];
+            <div id="candidateCard" class="hidden w-full max-w-[420px] bg-[#FFFDF9] border border-[#FCE8A6] rounded-xl p-4 shadow-sm animate-fade-in mt-2 text-center">
+                <p class="text-xs font-black font-serif-tc text-[#D4A373] mb-3 tracking-widest">✨ 珍珍與雞排君為你精選的「口袋名單」 ✨</p>
+                <div id="candidateList" class="flex flex-wrap justify-center gap-2 max-h-[100px] overflow-y-auto p-1"></div>
+                <p class="text-[11px] text-stone-400 mt-2.5 tracking-wide">（偷偷告訴你：這些都是非常符合你當下靈魂需求的美味，轉到誰都超讚喔！）</p>
+            </div>
+        </section>
 
-    const state = { step:0, answers:{}, candidates:[], wheelRotation:0, spinning:false, winner:null, particles:[] };
-    const chatLog = document.getElementById("chatLog");
-    const inputArea = document.getElementById("inputArea");
-    const wheel = document.getElementById("wheelCanvas");
-    const ctx = wheel.getContext("2d");
-    const fx = document.getElementById("fxCanvas");
-    const fctx = fx.getContext("2d");
-    const spinBtn = document.getElementById("spinBtn");
-    const wheelHint = document.getElementById("wheelHint");
-    const palette = ["#F7D9C4", "#FFF1B8", "#F6E8D8", "#F7C8C9", "#F3DEC9", "#E8CFAE", "#FFF7D8", "#FADFDA"];
+    </main>
 
-    function addAmbient() {
-      const layer = document.getElementById("ambientLayer");
-      for (let i = 0; i < 10; i++) {
-        const heart = document.createElement("span");
-        heart.className = "float-heart";
-        heart.style.left = Math.random() * 100 + "%";
-        heart.style.animationDelay = -Math.random() * 10 + "s";
-        heart.style.animationDuration = 9 + Math.random() * 7 + "s";
-        layer.appendChild(heart);
-      }
-      for (let i = 0; i < 18; i++) {
-        const flower = document.createElement("span");
-        flower.className = "paper-flower";
-        flower.style.left = Math.random() * 100 + "%";
-        flower.style.animationDelay = -Math.random() * 13 + "s";
-        flower.style.animationDuration = 10 + Math.random() * 8 + "s";
-        layer.appendChild(flower);
-      }
-    }
+    <footer class="py-4 text-center text-xs text-stone-400 border-t border-stone-100 bg-white font-medium tracking-wide">
+        © 2026 下一餐吃什麼～日系心靈美食顧問・文青視覺優化版
+    </footer>
 
-    function scrollChat() {
-      requestAnimationFrame(() => chatLog.scrollTop = chatLog.scrollHeight);
-    }
-
-    function addMessage(role, text) {
-      const row = document.createElement("div");
-      row.className = `bubble flex ${role === "user" ? "justify-end" : "justify-start"}`;
-      const bubble = document.createElement("div");
-      bubble.className = role === "user"
-        ? "max-w-[82%] rounded-[22px] rounded-br-md bg-hojicha px-4 py-3 leading-7 text-white shadow-tiny"
-        : "max-w-[88%] rounded-[22px] rounded-bl-md bg-white/82 px-4 py-3 leading-7 text-[#65564b] shadow-tiny dark:bg-[#4a4038] dark:text-[#fff1df]";
-      bubble.textContent = text;
-      row.appendChild(bubble);
-      chatLog.appendChild(row);
-      scrollChat();
-    }
-
-    function renderQuestion() {
-      const q = questions[state.step];
-      if (!q) {
-        renderFallback();
-        return;
-      }
-      addMessage("bot", q.text);
-      inputArea.innerHTML = "";
-      const wrap = document.createElement("div");
-      wrap.className = "grid grid-cols-1 gap-2 sm:grid-cols-2";
-      q.options.forEach(option => {
-        const btn = document.createElement("button");
-        btn.className = "option-btn rounded-2xl border border-white/80 bg-white/82 px-4 py-3 text-left font-medium text-sumi shadow-tiny dark:border-white/10 dark:bg-[#4a4038] dark:text-[#fff8ee]";
-        btn.textContent = option.label;
-        btn.onclick = () => {
-          addMessage("user", option.label);
-          if (q.key === "taste") {
-            state.answers.meat = option.value.meat;
-            state.answers.sweet = option.value.sweet;
-          } else {
-            state.answers[q.key] = option.value;
-          }
-          state.step += 1;
-          inputArea.innerHTML = "";
-          setTimeout(renderQuestion, 420);
+    <script>
+        const foodDatabase = {
+            breakfast: [
+                { name: "傳統豆漿油條", price: 1, hunger: 2, meat: 1 },
+                { name: "古早味粉漿蛋餅", price: 1, hunger: 2, meat: 2 },
+                { name: "中式飯糰", price: 1, hunger: 2, meat: 2 },
+                { name: "傳統乾麵黑白切", price: 1, hunger: 2, meat: 2 },
+                { name: "連鎖美式早點", price: 1, hunger: 2, meat: 2 },
+                { name: "炭烤吐司專賣店", price: 1, hunger: 2, meat: 2 },
+                { name: "現烤貝果可頌堡", price: 2, hunger: 2, meat: 1 },
+                { name: "質感早午餐", price: 3, hunger: 2, meat: 2 },
+                { name: "鐵板麵大冰奶", price: 1, hunger: 3, meat: 2 },
+                { name: "超商現烤麵包", price: 1, hunger: 1, meat: 1 },
+                { name: "中式粥品", price: 1, hunger: 2, meat: 2 },
+                { name: "中式水餃", price: 1, hunger: 2, meat: 3 }
+            ],
+            lunch: [
+                { name: "火鍋", price: 3, hunger: 3, meat: 3 },
+                { name: "牛肉麵", price: 2, hunger: 3, meat: 3 },
+                { name: "牛排", price: 3, hunger: 3, meat: 3 },
+                { name: "港式料理", price: 3, hunger: 2, meat: 2 },
+                { name: "炒飯", price: 1, hunger: 2, meat: 2 },
+                { name: "中式料理", price: 2, hunger: 2, meat: 2 },
+                { name: "泰式料理", price: 3, hunger: 2, meat: 2 },
+                { name: "酸菜魚", price: 3, hunger: 3, meat: 3 },
+                { name: "黃燜雞", price: 2, hunger: 3, meat: 3 },
+                { name: "日式料理", price: 3, hunger: 2, meat: 2 },
+                { name: "生魚片", price: 3, hunger: 1, meat: 3 },
+                { name: "吃到飽", price: 3, hunger: 3, meat: 3 },
+                { name: "網美餐廳", price: 3, hunger: 2, meat: 2 },
+                { name: "速食店", price: 2, hunger: 2, meat: 3 },
+                { name: "燒烤店", price: 3, hunger: 3, meat: 3 },
+                { name: "咖啡店", price: 2, hunger: 1, meat: 1 },
+                { name: "路邊小吃", price: 1, hunger: 2, meat: 2 },
+                { name: "客家料理", price: 2, hunger: 2, meat: 3 },
+                { name: "中式燒臘", price: 2, hunger: 3, meat: 3 },
+                { name: "南洋雞飯", price: 2, hunger: 2, meat: 3 },
+                { name: "日式丼飯", price: 2, hunger: 2, meat: 3 },
+                { name: "鴨肉飯", price: 1, hunger: 2, meat: 3 },
+                { name: "中式粥品", price: 1, hunger: 2, meat: 2 },
+                { name: "中式水餃", price: 1, hunger: 2, meat: 3 },
+                { name: "素食料理", price: 2, hunger: 2, meat: 1 }
+            ],
+            dinner: []
         };
-        wrap.appendChild(btn);
-      });
-      inputArea.appendChild(wrap);
-    }
+        
+        foodDatabase.dinner = [...foodDatabase.lunch, 
+            { name: "鹹酥雞", price: 2, hunger: 2, meat: 3 },
+            { name: "鹽水雞", price: 2, hunger: 1, meat: 2 },
+            { name: "夜市小吃", price: 2, hunger: 2, meat: 3 },
+            { name: "韓式炸雞", price: 3, hunger: 2, meat: 3 }
+        ];
 
-    function renderFallback() {
-      addMessage("bot", "最後，留一盞小小的備案燈。要不要把清冰箱料理或便利商店也放進轉盤裡？不勾也很好，今天就照心情走。");
-      inputArea.innerHTML = `
-        <div class="space-y-3">
-          <label class="flex cursor-pointer items-center gap-3 rounded-2xl bg-white/80 px-4 py-3 shadow-tiny dark:bg-[#4a4038]">
-            <input id="fallbackFridge" type="checkbox" class="h-5 w-5 rounded">
-            <span class="font-medium">清冰箱料理</span>
-          </label>
-          <label class="flex cursor-pointer items-center gap-3 rounded-2xl bg-white/80 px-4 py-3 shadow-tiny dark:bg-[#4a4038]">
-            <input id="fallbackStore" type="checkbox" class="h-5 w-5 rounded">
-            <span class="font-medium">便利商店</span>
-          </label>
-          <button id="confirmFallback" class="w-full rounded-full bg-hojicha px-5 py-3 font-semibold text-white shadow-tiny transition hover:bg-[#a77b56]">確認並載入轉盤</button>
-        </div>
-      `;
-      document.getElementById("confirmFallback").onclick = () => {
-        const fallbacks = [];
-        if (document.getElementById("fallbackFridge").checked) fallbacks.push("清冰箱料理");
-        if (document.getElementById("fallbackStore").checked) fallbacks.push("便利商店");
-        addMessage("user", fallbacks.length ? "加入：" + fallbacks.join("、") : "不用備案，交給命運");
-        prepareCandidates(fallbacks);
-      };
-    }
+        const questions = [
+            {
+                text: "【餐期確認】今天想和我們一起度過哪一餐呢？",
+                key: "meal",
+                options: [
+                    { label: "早餐 ☀️", value: "breakfast" },
+                    { label: "午餐 🍛", value: "lunch" },
+                    { label: "晚餐/宵夜 🌙", value: "dinner" }
+                ]
+            },
+            {
+                text: "【飢餓程度】現在肚子有多餓呢？",
+                key: "hunger",
+                options: [
+                    { label: "嘴饞微餓 🥗 (輕食點心)", value: 1 },
+                    { label: "剛剛好 🍱 (常規飽腹)", value: 2 },
+                    { label: "能吃下一頭牛 🥩 (大份量多澱粉)", value: 3 }
+                ]
+            },
+            {
+                text: "【口味與肉量】當下最想念哪種滿足感呢？",
+                key: "meat",
+                options: [
+                    { label: "清淡暖胃 / 想吃素 🥬", value: 1 },
+                    { label: "鹹香濃郁 / 肉菜均衡 🥢", value: 2 },
+                    { label: "想大口吃肉 / 無肉不歡 🍖", value: 3 },
+                    { label: "想要甜滋滋的療癒 🍰", value: "sweet" }
+                ]
+            },
+            {
+                text: "【用餐人數】今天是幾個人一起享受美食呢？",
+                key: "people",
+                options: [
+                    { label: "享受孤獨單身 🙋‍♂️", value: "single" },
+                    { label: "甜蜜雙人 👩‍❤️‍👨", value: "double" },
+                    { label: "溫馨多人 👨‍👩‍👧‍👦", value: "multi" }
+                ]
+            },
+            {
+                text: "【預算考量】今天的荷包心情如何？",
+                key: "price",
+                options: [
+                    { label: "銅板省錢 🪙 (<$100)", value: 1 },
+                    { label: "正常消費 💵 ($100-$250)", value: 2 },
+                    { label: "偶爾奢華一下 💎 (>$250)", value: 3 }
+                ]
+            },
+            {
+                text: "【出門意願】最後一題～今天願意走多遠去尋找美食？(氛圍儀式題)",
+                key: "distance",
+                options: [
+                    { label: "只想在巷口 🚶", value: "close" },
+                    { label: "10分鐘路程 🚴", value: "mid" },
+                    { label: "展開美食大冒險 🚗", value: "far" }
+                ]
+            }
+        ];
 
-    function prepareCandidates(fallbacks) {
-      const groupBoost = ["火鍋", "燒烤店", "吃到飽", "中式料理"];
-      const sweetBoost = ["咖啡店", "超商現烤麵包", "現烤貝果可頌堡", "質感早午餐"];
-      const ranked = foodDatabase
-        .filter(food => food.meal === state.answers.meal)
-        .map((food, index) => {
-          let score = 0;
-          if (food.hunger === state.answers.hunger) score += 4;
-          if (food.meat === state.answers.meat) score += 4;
-          if (food.price === state.answers.price) score += 3;
-          if (state.answers.people === "group" && groupBoost.includes(food.name)) score += 2;
-          if (state.answers.sweet && sweetBoost.includes(food.name)) score += 3;
-          return { ...food, score, index };
-        })
-        .sort((a, b) => b.score - a.score || a.price - b.price || a.index - b.index);
+        let currentQuestionStep = 0;
+        let userAnswers = {};
+        let selectedFoodPool = [];
 
-      const top = [];
-      const seen = new Set();
-      for (const food of ranked) {
-        if (!seen.has(food.name)) {
-          top.push(food);
-          seen.add(food.name);
+        const canvas = document.getElementById("wheelCanvas");
+        const ctx = canvas.getContext("2d");
+        const pastelColors = ["#FFDFD3", "#E2F0CB", "#B5E2FA", "#FBC4AB", "#C5A3FF", "#FFC6FF", "#FFEDA6", "#D8E2DC", "#FFE5D9", "#ECE4DB"];
+        let isSpinning = false;
+        let currentAngle = 0;
+
+        window.onload = () => {
+            renderQuestion();
+            drawEmptyWheel();
+        };
+
+        function renderQuestion() {
+            const container = document.getElementById("optionsContainer");
+            container.innerHTML = "";
+
+            if (currentQuestionStep < questions.length) {
+                const q = questions[currentQuestionStep];
+                addChatBubble("bot", q.text);
+
+                q.options.forEach(opt => {
+                    const btn = document.createElement("button");
+                    /* 優化：寬字距、暖石墨色，懸停時邊框柔和變色 */
+                    btn.className = "w-full text-left py-3.5 px-5 bg-white border-2 border-stone-100 hover:border-[#FFB5A7] rounded-xl hover:bg-[#FFFDF9] transition-all text-base md:text-lg font-bold shadow-sm animate-fade-in text-stone-800 tracking-wide";
+                    btn.innerText = opt.label;
+                    btn.onclick = () => selectOption(q.key, opt);
+                    container.appendChild(btn);
+                });
+            } else {
+                addChatBubble("bot", "太棒了！心靈對話已完成，珍珍和雞排君已經感應到你的靈魂密碼囉！最後看看是否要加入保底備案呢？");
+                document.getElementById("backupContainer").classList.remove("hidden");
+            }
         }
-        if (top.length === 5) break;
-      }
-      fallbacks.forEach(name => top.push({ name, meal: state.answers.meal, price: 1, hunger: state.answers.hunger, meat: state.answers.meat, score: 5 }));
-      state.candidates = top;
-      state.winner = null;
-      addMessage("bot", "好，香氣已經排成一圈了。等你按下轉盤，珍珍和雞排君會把最適合現在的那一口，輕輕送到你面前。");
-      inputArea.innerHTML = `<button id="restartChat" class="w-full rounded-full bg-white/80 px-5 py-3 font-semibold text-hojicha shadow-tiny transition hover:bg-custard dark:bg-[#4a4038] dark:text-[#fff1df]">重新聊天選一次</button>`;
-      document.getElementById("restartChat").onclick = resetAll;
-      spinBtn.disabled = false;
-      wheelHint.textContent = "候選名單已完成，按下按鈕讓香氣開始旋轉。";
-      document.getElementById("againTop").classList.remove("hidden");
-      drawWheel();
-    }
 
-    function drawWheel(rotation = state.wheelRotation) {
-      const w = wheel.width;
-      const h = wheel.height;
-      const cx = w / 2;
-      const cy = h / 2;
-      const r = w * .43;
-      ctx.clearRect(0, 0, w, h);
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(rotation);
-      const items = state.candidates.length ? state.candidates : [{name:"豆漿油條"},{name:"暖胃粥品"},{name:"日式丼飯"},{name:"火鍋"},{name:"咖啡店"},{name:"鹹酥雞"}];
-      const seg = Math.PI * 2 / items.length;
-      for (let i = 0; i < items.length; i++) {
-        ctx.beginPath();
-        ctx.moveTo(0,0);
-        ctx.arc(0,0,r,i*seg,(i+1)*seg);
-        ctx.closePath();
-        ctx.fillStyle = palette[i % palette.length];
-        ctx.fill();
-        ctx.strokeStyle = "rgba(255,255,255,.82)";
-        ctx.lineWidth = 6;
-        ctx.stroke();
-        ctx.save();
-        ctx.rotate(i * seg + seg / 2);
-        ctx.textAlign = "right";
-        ctx.textBaseline = "middle";
-        ctx.fillStyle = "#5f5046";
-        ctx.font = `700 ${items.length > 6 ? 30 : 36}px "Noto Sans TC","Microsoft JhengHei",sans-serif`;
-        wrapWheelText(items[i].name, r - 40, 0, Math.max(76, r * .29), items.length > 6 ? 32 : 38);
-        ctx.restore();
-      }
-      ctx.beginPath();
-      ctx.arc(0,0,r*.19,0,Math.PI*2);
-      ctx.fillStyle = "#FFFDF7";
-      ctx.fill();
-      ctx.lineWidth = 8;
-      ctx.strokeStyle = "#B88B64";
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(0,0,r*.08,0,Math.PI*2);
-      ctx.fillStyle = "#F7C8C9";
-      ctx.fill();
-      ctx.restore();
-      ctx.save();
-      ctx.globalAlpha = .22;
-      ctx.beginPath();
-      ctx.arc(cx, cy, r + 18, 0, Math.PI * 2);
-      ctx.strokeStyle = "#FFF1B8";
-      ctx.lineWidth = 24;
-      ctx.stroke();
-      ctx.restore();
-    }
-
-    function wrapWheelText(text, x, y, maxWidth, lineHeight) {
-      const lines = [];
-      let line = "";
-      for (const char of [...text]) {
-        const test = line + char;
-        if (ctx.measureText(test).width > maxWidth && line) {
-          lines.push(line);
-          line = char;
-        } else {
-          line = test;
+        function selectOption(key, option) {
+            userAnswers[key] = option.value;
+            addChatBubble("user", option.label);
+            
+            currentQuestionStep++;
+            setTimeout(() => {
+                renderQuestion();
+            }, 400);
         }
-      }
-      if (line) lines.push(line);
-      const start = y - (lines.length - 1) * lineHeight / 2;
-      lines.slice(0, 3).forEach((ln, i) => ctx.fillText(ln, x, start + i * lineHeight));
-    }
 
-    function cubicOut(t) { return 1 - Math.pow(1 - t, 3); }
+        function addChatBubble(sender, text) {
+            const chatHistory = document.getElementById("chatHistory");
+            const wrapper = document.createElement("div");
+            wrapper.className = `flex items-start gap-3 max-w-[88%] text-base md:text-lg font-medium leading-relaxed tracking-wide ${sender === 'user' ? 'self-end flex-row-reverse' : 'self-start'}`;
+            
+            const avatar = sender === 'bot' ? '🧋' : '😋';
+            const bgClass = sender === 'bot' ? 'bg-stone-50 border border-stone-100 rounded-tl-none text-stone-800' : 'bg-[#FFE5D9] text-stone-900 rounded-tr-none font-bold';
 
-    function selectWinner() {
-      const weights = state.candidates.map((food, index) => Math.max(1, food.score) + Math.max(0, 5 - index));
-      const total = weights.reduce((sum, n) => sum + n, 0);
-      let pick = Math.random() * total;
-      for (let i = 0; i < weights.length; i++) {
-        pick -= weights[i];
-        if (pick <= 0) return i;
-      }
-      return 0;
-    }
-
-    function spinWheel() {
-      if (state.spinning || !state.candidates.length) return;
-      state.spinning = true;
-      spinBtn.disabled = true;
-      wheelHint.textContent = "轉盤正在把晚風、香氣和一點點運氣攪在一起。";
-      const winnerIndex = selectWinner();
-      const n = state.candidates.length;
-      const seg = Math.PI * 2 / n;
-      const pointerAngle = -Math.PI / 2;
-      const centerAngle = winnerIndex * seg + seg / 2;
-      const current = state.wheelRotation % (Math.PI * 2);
-      let target = pointerAngle - centerAngle;
-      while (target < current) target += Math.PI * 2;
-      target += Math.PI * 2 * 8 + Math.PI * 2 * Math.floor(Math.random() * 3);
-      const start = state.wheelRotation;
-      const duration = 5200;
-      const t0 = performance.now();
-      function frame(now) {
-        const p = Math.min(1, (now - t0) / duration);
-        let eased;
-        if (p < .33) eased = cubicOut(p / .33) * .52;
-        else if (p < .72) eased = .52 + cubicOut((p - .33) / .39) * .34;
-        else eased = .86 + cubicOut((p - .72) / .28) * .14;
-        state.wheelRotation = start + (target - start) * eased;
-        drawWheel();
-        burstParticles(p);
-        drawParticles();
-        if (p < 1) requestAnimationFrame(frame);
-        else {
-          state.wheelRotation = target % (Math.PI * 2);
-          state.winner = state.candidates[winnerIndex];
-          drawWheel();
-          state.spinning = false;
-          showResult(state.winner);
+            wrapper.innerHTML = `
+                <div class="w-9 h-9 rounded-full bg-white border border-stone-100 flex items-center justify-center text-xs shadow-sm shrink-0">${avatar}</div>
+                <div class="${bgClass} rounded-2xl p-3.5 shadow-sm">${text}</div>
+            `;
+            chatHistory.appendChild(wrapper);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
         }
-      }
-      requestAnimationFrame(frame);
-    }
 
-    function burstParticles(progress) {
-      if (Math.random() < .8) {
-        const angle = Math.random() * Math.PI * 2;
-        const radius = 230 + Math.random() * 170;
-        state.particles.push({
-          x: 450 + Math.cos(angle) * radius,
-          y: 450 + Math.sin(angle) * radius,
-          vx: Math.cos(angle) * (1 + Math.random() * 2),
-          vy: Math.sin(angle) * (1 + Math.random() * 2),
-          life: 35 + Math.random() * 35,
-          size: 3 + Math.random() * 6,
-          color: Math.random() > .5 ? "#FFF1B8" : "#F7C8C9"
-        });
-      }
-      if (progress > .96 && Math.random() < .35) {
-        for (let i = 0; i < 6; i++) {
-          state.particles.push({ x:450, y:450, vx:(Math.random()-.5)*10, vy:(Math.random()-.5)*10, life:45, size:4+Math.random()*7, color:["#FFF1B8","#F7C8C9","#F7D9C4","#FFFDF7"][i%4] });
+        function confirmAndLoadWheel() {
+            const targetMeal = userAnswers.meal;
+            const pool = foodDatabase[targetMeal] || [];
+            
+            let scoredPool = pool.map(food => {
+                let score = 0;
+                if (food.hunger === userAnswers.hunger) score += 3;
+                if (food.price === userAnswers.price) score += 3;
+                if (userAnswers.meat === "sweet") {
+                    if (food.name === "咖啡店" || food.name === "超商現烤麵包") score += 5;
+                } else if (food.meat === userAnswers.meat) {
+                    score += 3;
+                }
+                return { ...food, score: score };
+            });
+
+            let maxScore = Math.max(...scoredPool.map(item => item.score));
+            let matchedItems = scoredPool.filter(item => item.score >= Math.max(3, maxScore - 3));
+
+            if (matchedItems.length < 3) {
+                scoredPool.sort((a, b) => b.score - a.score);
+                matchedItems = scoredPool.slice(0, 5);
+            }
+
+            let finalSelection = matchedItems.map(item => item.name);
+
+            const hasFridge = document.getElementById("checkFridge").checked;
+            const hasStore = document.getElementById("checkStore").checked;
+            
+            if (hasFridge) finalSelection.push("清冰箱料理");
+            if (hasStore) finalSelection.push("便利商店");
+
+            selectedFoodPool = [...new Set(finalSelection)];
+
+            drawWheel(selectedFoodPool);
+            renderCandidateList(selectedFoodPool);
+
+            const spinBtn = document.getElementById("spinBtn");
+            spinBtn.disabled = false;
+            spinBtn.className = "px-10 py-4 bg-[#FFB5A7] text-white font-black font-serif-tc rounded-full shadow-md hover:bg-[#FCD5CE] cursor-pointer transition-all text-lg tracking-widest animate-pulse";
+            spinBtn.innerText = "🌟 啟動命運轉盤 🌟";
+
+            document.getElementById("backupContainer").classList.add("hidden");
+            document.getElementById("optionsContainer").innerHTML = `<p class="text-sm text-center text-stone-400 py-2 font-medium tracking-wide">轉盤已就緒！請點擊右側按鈕進行命運大轉盤 🎉</p>`;
+            
+            const badge = document.getElementById("loadedBadge");
+            badge.innerText = `已為你載入 ${selectedFoodPool.length} 項高匹配度美味`;
+            badge.classList.remove("hidden");
         }
-      }
-    }
 
-    function drawParticles() {
-      fctx.clearRect(0, 0, fx.width, fx.height);
-      for (let i = state.particles.length - 1; i >= 0; i--) {
-        const p = state.particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += .03;
-        p.life -= 1;
-        fctx.save();
-        fctx.globalAlpha = Math.max(0, p.life / 60);
-        fctx.translate(p.x, p.y);
-        fctx.rotate(p.life * .15);
-        fctx.fillStyle = p.color;
-        fctx.beginPath();
-        fctx.moveTo(0, -p.size);
-        fctx.lineTo(p.size * .38, -p.size * .38);
-        fctx.lineTo(p.size, 0);
-        fctx.lineTo(p.size * .38, p.size * .38);
-        fctx.lineTo(0, p.size);
-        fctx.lineTo(-p.size * .38, p.size * .38);
-        fctx.lineTo(-p.size, 0);
-        fctx.lineTo(-p.size * .38, -p.size * .38);
-        fctx.closePath();
-        fctx.fill();
-        fctx.restore();
-        if (p.life <= 0) state.particles.splice(i, 1);
-      }
-    }
+        function renderCandidateList(list) {
+            const card = document.getElementById("candidateCard");
+            const container = document.getElementById("candidateList");
+            container.innerHTML = "";
 
-    function resultCopy(name) {
-      if (name === "火鍋") return "今晚就讓火鍋收留你吧。薄薄的肉片在湯中翻滾，像被熱氣溫柔抱住，蔬菜慢慢釋出甜味，豆皮吸飽湯汁。每一口都不急，先聽湯滾，再把心裡的疲憊一起煮軟。";
-      if (name === "中式燒臘") return "中式燒臘很適合此刻。脆皮在燈下泛著蜜色光澤，刀起刀落時香氣悄悄散開，油亮的肉汁貼著白飯慢慢滲下去。那是一種很踏實的幸福，像有人替你把晚餐安排得剛剛好。";
-      if (name === "素食料理") return "今天可以把身體交給素食料理。鮮甜蔬菜在高湯裡舒展，菇類帶著溫和香氣，豆腐柔柔接住味道。吃起來不張揚，卻像一碗乾淨的月光，替肚子和心情都留一點清亮。";
-      if (name === "清冰箱料理") return "清冰箱料理是今晚的小魔法。把剩下的食材重新組合，不必追求華麗，只要熱起來、香起來、有人好好吃完它，就已經是一頓很有生活感的晚餐。";
-      if (name === "便利商店") return "便利商店也能是一盞溫柔的夜燈。茶葉蛋有安定的滷香，關東煮在熱湯裡慢慢冒氣，再配一杯熱飲，簡單卻可靠。今晚不用為難自己，先讓胃暖起來就好。";
-      const scenes = {
-        "傳統豆漿油條":"熱豆漿冒著細細白煙，油條酥脆地靠在碗邊，清晨的光像棉被一樣軟。","古早味粉漿蛋餅":"粉漿蛋餅帶著微微焦香，邊緣軟中有脆，醬油膏慢慢化開，是很台式的早安。","中式飯糰":"飯糰握得紮實，油條、肉鬆和酸菜藏在裡頭，每一口都像把早晨收進掌心。","傳統乾麵黑白切":"乾麵拌開醬香，黑白切安靜躺在小盤裡，簡單卻很有老店的穩定感。","連鎖美式早點":"蛋香、吐司和溫熱飲料排在桌上，是不用思考也能被照顧的一餐。","炭烤吐司專賣店":"炭烤吐司有淡淡煙香，奶油在熱度裡融化，鹹甜交錯得像慢慢醒來的城市。","現烤貝果可頌堡":"現烤麵香鬆鬆散開，貝果或可頌夾著清爽餡料，像把一小段假日放進盤子。","質感早午餐":"木盤、嫩蛋、沙拉和烤麵包排得漂亮，今天適合慢一點，讓自己吃得像被好好款待。","鐵板麵大冰奶":"鐵板麵熱呼呼地裹著醬，旁邊一杯大冰奶透著涼意，飽足感直接又可愛。","超商現烤麵包":"剛出爐的麵包帶著奶油香，便利卻不敷衍，咬下去有一點甜甜的安慰。","中式粥品":"粥品溫柔地包住胃，米粒煮到柔軟，配一點鹹香小菜，整個人都會安靜下來。","中式水餃":"水餃圓鼓鼓地盛在盤裡，咬開有熱氣和肉汁，是很家常、也很可靠的幸福。","牛肉麵":"牛肉麵的湯頭沉穩厚實，麵條掛著香氣，牛肉軟而有力，像替今天補上一口勇氣。","牛排":"熱鐵板滋滋作響，牛排香氣往上竄，今晚可以稍微隆重一點，讓自己被飽足感照亮。","港式料理":"蒸籠一掀，點心熱氣輕輕散開，蝦餃、燒賣與茶香都讓餐桌變得柔和熱鬧。","炒飯":"米飯粒粒分明，鍋氣和蛋香在盤裡交會，簡單直接，卻有一種把人餵飽的真心。","中式料理":"幾道熱菜配上白飯，鹹香、青菜與湯水剛好平衡，很適合把一天的話慢慢吃完。","泰式料理":"酸香與辛香輕輕打開胃口，香料像午後陽光一樣明亮，讓疲倦也變得有精神。","酸菜魚":"酸菜魚的湯底開胃鮮明，魚片柔嫩滑過舌尖，熱辣與酸香一起把胃叫醒。","黃燜雞":"黃燜雞醬香濃郁，雞肉與馬鈴薯吸飽湯汁，蓋在飯上就是踏踏實實的一碗滿足。","日式料理":"日式料理有乾淨的層次，飯、湯、主菜各自安靜發光，像替今天整理出一張清爽餐桌。","生魚片":"生魚片清亮細緻，入口帶著海的鮮甜，適合想輕盈一點，卻仍想被美味照顧的時刻。","吃到飽":"吃到飽像一場熱鬧小旅行，想吃什麼都能慢慢拿，今晚就把選擇權交還給胃口。","網美餐廳":"漂亮的餐盤、柔和燈光和細緻擺盤，讓這一餐不只填飽肚子，也替心情拍一張好看的照片。","速食店":"薯條熱熱脆脆，漢堡握在手裡很有份量，偶爾直接一點，也是一種爽快的療癒。","燒烤店":"烤網上的香氣一層層升起，肉片邊緣微焦，聊天聲配著炭香，夜晚自然就暖了。","咖啡店":"咖啡香慢慢落在杯緣，輕食和甜點陪在旁邊，今天可以不急著飽，只要溫柔地滿足。","路邊小吃":"路邊小吃有城市最親切的熱氣，攤燈亮著，香味飄著，簡單一份就能吃出生活的味道。","客家料理":"客家料理鹹香厚實，鑊氣與醬香都很鮮明，配白飯尤其安心，像長輩端來的招呼。","南洋雞飯":"雞飯油潤清香，雞肉嫩、醬汁亮，米飯吸著香氣，吃起來清爽卻很有存在感。","日式丼飯":"丼飯把肉香、醬汁和白飯收在同一只碗裡，扒開熱氣，就能得到一份剛剛好的飽足。","鴨肉飯":"鴨肉飯帶著淡淡煙燻香，油蔥和醬汁滲進米飯，樸實卻耐吃，越吃越安定。","鹹酥雞":"鹹酥雞剛炸好時最會安慰人，九層塔香氣一上來，外酥內嫩，整個夜晚都變得鬆了一點。","鹽水雞":"鹽水雞清爽又有嚼勁，蔬菜和雞肉拌著胡椒香，適合想吃肉卻不想太沉重的夜晚。","夜市小吃":"夜市小吃有燈光、人聲和熱騰騰的香氣，邊走邊吃，像把今晚過成一場小小散步。","韓式炸雞":"韓式炸雞裹著亮亮醬汁，甜辣和酥脆一起出現，適合把今天的悶氣咬成清脆聲響。"
-      };
-      const base = scenes[name] || `${name}正適合此刻，熱氣、香氣和一點點期待會慢慢聚在桌上。`;
-      return `${base} 珍珍想替你倒一杯暖暖的飲料，雞排君在旁邊笑得很開心。這一餐不用完美，只要入口的那一瞬間，能讓肩膀放鬆、讓肚子點頭，就已經很好很好了。`;
-    }
+            list.forEach((name, index) => {
+                const badge = document.createElement("span");
+                badge.className = "text-sm px-3 py-1.5 font-bold rounded-lg border border-stone-50 shadow-sm animate-fade-in tracking-wide";
+                badge.style.backgroundColor = pastelColors[index % pastelColors.length];
+                badge.style.color = "#292524";
+                badge.innerText = name;
+                container.appendChild(badge);
+            });
 
-    function showResult(item) {
-      spinBtn.disabled = false;
-      wheelHint.textContent = "命運已經選好，香氣正停在你的名字旁邊。";
-      addMessage("bot", `轉盤停下來了。今晚是「${item.name}」。慢慢吃，讓這一口陪你把今天收好。`);
-      document.getElementById("resultTitle").textContent = item.name;
-      document.getElementById("resultText").textContent = resultCopy(item.name);
-      const steps = document.getElementById("specialSteps");
-      steps.classList.add("hidden");
-      steps.innerHTML = "";
-      if (item.name === "清冰箱料理") {
-        steps.classList.remove("hidden");
-        steps.innerHTML = `<ol class="list-decimal space-y-2 pl-5"><li>先找一份主食：白飯、麵、吐司或冷凍水餃都可以。</li><li>再挑兩樣配角：雞蛋、青菜、菇類、罐頭或剩菜，切小一點比較快熟。</li><li>用蒜香或醬油拌炒，最後加一點胡椒或蔥花，熱熱上桌就很有家的味道。</li></ol>`;
-      }
-      if (item.name === "便利商店") {
-        steps.classList.remove("hidden");
-        steps.innerHTML = `<div class="space-y-2"><p>今晚推薦這樣配：茶葉蛋一顆、關東煮兩到三樣，再拿一杯熱飲。</p><p>有湯、有蛋白質，也有溫度，簡單但不孤單。</p></div>`;
-      }
-      saveHistory(item.name);
-      renderHistory();
-      document.getElementById("resultModal").classList.remove("hidden");
-      document.getElementById("resultModal").classList.add("flex");
-      scrollChat();
-    }
+            card.classList.remove("hidden");
+        }
 
-    function saveHistory(name) {
-      const history = JSON.parse(localStorage.getItem("nextMealHistory") || "[]");
-      history.unshift({ name, time: new Date().toLocaleString("zh-TW", { hour12: false }) });
-      localStorage.setItem("nextMealHistory", JSON.stringify(history.slice(0, 10)));
-    }
+        function drawEmptyWheel() {
+            const radius = canvas.width / 2;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.arc(radius, radius, radius - 10, 0, 2 * Math.PI);
+            ctx.fillStyle = "#FDFBF7";
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "#E7E5E4";
+            ctx.stroke();
+            
+            ctx.fillStyle = "#A8A29E";
+            ctx.font = "bold 15px 'Noto Sans TC', sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("完成對話後自動生成扇區", radius, radius + 5);
+        }
 
-    function renderHistory() {
-      const list = document.getElementById("historyList");
-      const history = JSON.parse(localStorage.getItem("nextMealHistory") || "[]");
-      list.innerHTML = "";
-      if (!history.length) {
-        list.innerHTML = `<span class="text-[#8b715f] dark:text-[#ead8c5]">還沒有紀錄，第一份香氣正在路上。</span>`;
-        return;
-      }
-      history.forEach(item => {
-        const tag = document.createElement("span");
-        tag.className = "rounded-full bg-[#fff8e8] px-3 py-1.5 text-hojicha shadow-tiny dark:bg-[#4a4038] dark:text-[#fff1df]";
-        tag.textContent = item.name;
-        tag.title = item.time;
-        list.appendChild(tag);
-      });
-    }
+        function drawWheel(list) {
+            const numSlices = list.length;
+            const radius = canvas.width / 2;
+            const sliceAngle = (2 * Math.PI) / numSlices;
 
-    function resetAll() {
-      state.step = 0;
-      state.answers = {};
-      state.candidates = [];
-      state.winner = null;
-      state.spinning = false;
-      state.wheelRotation = 0;
-      chatLog.innerHTML = "";
-      inputArea.innerHTML = "";
-      spinBtn.disabled = true;
-      wheelHint.textContent = "先和珍珍、雞排君聊幾句，轉盤就會慢慢亮起來。";
-      document.getElementById("againTop").classList.add("hidden");
-      document.getElementById("resultModal").classList.add("hidden");
-      document.getElementById("resultModal").classList.remove("flex");
-      drawWheel();
-      setTimeout(() => {
-        addMessage("bot", "晚安，歡迎來到下一餐的小食堂。珍珍和雞排君在這裡，陪你把飢餓慢慢說清楚。");
-        setTimeout(renderQuestion, 520);
-      }, 120);
-    }
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    function closeModal() {
-      document.getElementById("resultModal").classList.add("hidden");
-      document.getElementById("resultModal").classList.remove("flex");
-    }
+            for (let i = 0; i < numSlices; i++) {
+                const angle = currentAngle + i * sliceAngle;
+                
+                ctx.beginPath();
+                ctx.moveTo(radius, radius);
+                ctx.arc(radius, radius, radius - 6, angle, angle + sliceAngle);
+                ctx.closePath();
+                ctx.fillStyle = pastelColors[i % pastelColors.length];
+                ctx.fill();
+                ctx.lineWidth = 1.5;
+                ctx.strokeStyle = "#FFFFFF";
+                ctx.stroke();
 
-    document.getElementById("darkToggle").onclick = () => {
-      document.documentElement.classList.toggle("dark");
-      localStorage.setItem("nextMealDark", document.documentElement.classList.contains("dark") ? "1" : "0");
-    };
-    document.getElementById("closeModal").onclick = closeModal;
-    document.getElementById("keepModal").onclick = closeModal;
-    document.getElementById("againModal").onclick = resetAll;
-    document.getElementById("againTop").onclick = resetAll;
-    document.getElementById("clearHistory").onclick = () => {
-      localStorage.removeItem("nextMealHistory");
-      renderHistory();
-    };
-    spinBtn.onclick = spinWheel;
-    window.addEventListener("resize", drawWheel);
+                ctx.save();
+                ctx.translate(radius, radius);
+                ctx.rotate(angle + sliceAngle / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "#292524";
+                
+                const fontSize = numSlices > 8 ? "13px" : "15px";
+                ctx.font = `bold ${fontSize} 'Noto Sans TC', sans-serif`;
+                ctx.fillText(list[i], radius - 28, 6);
+                ctx.restore();
+            }
+        }
 
-    if (localStorage.getItem("nextMealDark") === "1") document.documentElement.classList.add("dark");
-    addAmbient();
-    renderHistory();
-    drawWheel();
-    resetAll();
-  </script>
+        function spinWheel() {
+            if (isSpinning || selectedFoodPool.length === 0) return;
+            isSpinning = true;
+            
+            const spinBtn = document.getElementById("spinBtn");
+            spinBtn.disabled = true;
+            spinBtn.className = "px-10 py-4 bg-stone-200 text-stone-400 font-black font-serif-tc rounded-full shadow-inner cursor-not-allowed text-lg tracking-widest";
+            spinBtn.innerText = "命運旋轉中...";
+
+            const totalFrames = 180;
+            let currentFrame = 0;
+            const startRotation = currentAngle;
+            const extraRotation = 6 * 2 * Math.PI + Math.random() * 2 * Math.PI; 
+
+            function animate() {
+                currentFrame++;
+                const t = currentFrame / totalFrames;
+                const easeOutCubic = 1 - Math.pow(1 - t, 3);
+                currentAngle = startRotation + extraRotation * easeOutCubic;
+
+                drawWheel(selectedFoodPool);
+
+                if (currentFrame < totalFrames) {
+                    requestAnimationFrame(animate);
+                } else {
+                    isSpinning = false;
+                    determineWinner();
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        function determineWinner() {
+            const numSlices = selectedFoodPool.length;
+            const sliceAngle = (2 * Math.PI) / numSlices;
+            
+            let normalizedAngle = (1.5 * Math.PI - currentAngle) % (2 * Math.PI);
+            if (normalizedAngle < 0) normalizedAngle += 2 * Math.PI;
+
+            const winnerIndex = Math.floor(normalizedAngle / sliceAngle) % numSlices;
+            const winnerName = selectedFoodPool[winnerIndex];
+
+            let blessingText = "";
+            if (winnerName === "清冰箱料理") {
+                blessingText = `✨ 雞排君眨眨眼說：『太好了，是【清冰箱料理】！這可是開啟個人主廚模式的大好機會：<br>1. 翻出角落所有的剩餘食材。<br>2. 發揮創意來個溫馨大雜燴炒飯或暖心煮麵。<br>3. 懷著感恩的心把它們吃光！動手變出專屬自己熱騰騰的暖心一餐吧！』`;
+            } else if (winnerName === "便利商店") {
+                blessingText = `🏪 珍珍歪頭微笑：『選中了萬能的【便利商店】！這代表著生活裡最貼心、最穩定的陪伴。珍珍偷偷推薦你：挑選一盒剛出爐的微波熱騰騰主食，再搭配一顆散發濃育茶香的茶葉蛋，簡單平凡卻是最確定的幸福喔！』`;
+            } else if (winnerName === "素食料理") {
+                blessingText = `🥬 珍珍用溫柔似水的眼神看著你：『指針停在了【素食料理】。這一定是心靈發出的純淨訊號！今晚來點翠綠鮮甜的清炒時蔬、溫潤甘甜的蔬果高湯吧，清新且完全沒有負擔的美味，能好好撫慰你疲憊的一天。』`;
+            } else if (winnerName === "火鍋" || winnerName === "酸菜魚") {
+                blessingText = `🍲 珍珍和雞排君一起拍手歡呼：『大獎揭曉～是讓人熱血沸騰的【${winnerName}】！想像一下，鮮嫩的肉片在滾燙的湯底裡歡快翻滾，白色的煙霧徐徐升騰，香氣撲鼻。這絕對是熱量與靈魂的雙重極致治癒！快出發吧！』`;
+            } else if (winnerName === "中式燒臘" || winnerName === "牛排" || winnerName === "韓式炸雞") {
+                blessingText = `🍖 雞排君興奮得閃閃發光：『天啊！是讓人垂涎三尺的【${winnerName}】！光是想到油亮酥脆的外皮在砧板上發出誘人聲響，或是飽滿多汁的肉塊在嘴裡綻放脂香，口水就忍不住啦！這是你今天努力應得的極致奢華犒賞！』`;
+            } else {
+                blessingText = `✨ 珍珍與雞排君靠在一起對你說：『命運的指針選擇了【${winnerName}】！這一定是命中注定的緣分。看著它熱氣騰騰上桌的模樣，一口咬下，將今天所有的煩惱和疲憊通通融化吧！祝你用餐愉快，身心都飽飽的喔～』`;
+            }
+
+            /* 優化：核心中獎文字套用思源宋體 (font-serif-tc) 與焦糖深茶色，大幅提升儀式感與溫暖質感 */
+            addChatBubble("bot", `🎉 叮咚！轉盤結果出爐囉！<br><br>我們今晚為你選中的靈魂美食是：<br><strong class="block text-3xl md:text-4xl font-serif-tc text-amber-950 font-black my-3 tracking-widest">${winnerName}</strong><br>${blessingText}`);
+
+            const optionsContainer = document.getElementById("optionsContainer");
+            optionsContainer.innerHTML = `
+                <button onclick="resetApp()" class="w-full py-3.5 bg-[#E2F0CB] text-[#5A7234] font-extrabold rounded-xl shadow-sm hover:bg-[#D4E8B7] transition-all text-base md:text-lg tracking-wider font-serif-tc">
+                    🔄 重新測驗 / 再玩一次
+                </button>
+            `;
+        }
+
+        function resetApp() {
+            currentQuestionStep = 0;
+            userAnswers = {};
+            selectedFoodPool = [];
+            isSpinning = false;
+            
+            document.getElementById("chatHistory").innerHTML = `
+                <div class="flex items-start gap-3 animate-fade-in">
+                    <div class="w-9 h-9 rounded-full bg-[#FFE5D9] flex items-center justify-center text-sm shadow-inner shrink-0">🧋</div>
+                    <div class="bg-stone-50 border border-stone-100 rounded-2xl rounded-tl-none p-3.5 max-w-[85%] text-base font-medium leading-relaxed tracking-wide text-stone-800">
+                        重新出發！這次你的靈魂想吃點什麼呢？珍珍和雞排君都在這裡陪你唷。
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById("loadedBadge").classList.add("hidden");
+            document.getElementById("candidateCard").classList.add("hidden");
+            
+            const spinBtn = document.getElementById("spinBtn");
+            spinBtn.disabled = true;
+            spinBtn.className = "px-10 py-4 bg-stone-200 text-stone-400 font-black font-serif-tc rounded-full shadow-md cursor-not-allowed transition-all text-lg tracking-widest";
+            spinBtn.innerText = "請先完成心靈對話 🔮";
+            
+            document.getElementById("checkFridge").checked = false;
+            document.getElementById("checkStore").checked = false;
+
+            renderQuestion();
+            drawEmptyWheel();
+        }
+    </script>
 </body>
 </html>
